@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FA7198</color>
+    <color name="colorPrimaryDark">#FA7198</color>
+    <color name="colorAccent">#FA7198</color>
+
+    <color name="blue">#20C1FD</color>
+    <color name="green_300">#81C784</color>
+    <color name="yellow">#FFD11B</color>
+    <color name="white">#FFFFFF</color>
+    <color name="font_normal">#555555</color>
+    <color name="meizibg">#faf1f1f1</color>
+    <color name="mid_grey">#40808080</color>
+
+</resources>
