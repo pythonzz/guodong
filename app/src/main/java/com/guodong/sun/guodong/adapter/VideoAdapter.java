@@ -1,6 +1,7 @@
 package com.guodong.sun.guodong.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.entity.duanzi.NeiHanVideo;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
 
+import java.net.URI;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -48,7 +50,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     {
         NeiHanVideo.DataBean bean = mLists.get(position);
         boolean isSetUp = false;
-        if(bean.getGroup().getMp4_url() != null)
+        if(bean.getGroup() != null)
             isSetUp = holder.mVideoPlayerStandard.setUp(bean.getGroup().getMp4_url(),
                 JCVideoPlayer.SCREEN_LAYOUT_LIST, bean.getGroup().getText());
 
