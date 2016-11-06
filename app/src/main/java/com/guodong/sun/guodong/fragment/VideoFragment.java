@@ -162,13 +162,18 @@ public class VideoFragment extends AbsBaseFragment implements IVideoView
     }
 
     @Override
-    public void finishCreateView(Bundle state)
+    protected void finishCreateView(Bundle state)
     {
         isPrepared = true;
         mVideoPresenter = new VideoPresenterImpl(this);
         lazyLoad();
     }
 
+    @Override
+    protected void onInvisible()
+    {
+        JCVideoPlayer.releaseAllVideos();
+    }
 
     @Override
     public void updateVideoData(ArrayList<NeiHanVideo.DataBean> list)

@@ -43,7 +43,6 @@ public abstract class AbsBaseFragment extends RxFragment
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         finishCreateView(savedInstanceState);
     }
 
@@ -115,5 +114,5 @@ public abstract class AbsBaseFragment extends RxFragment
 
     protected abstract int getLayoutResId();
     protected abstract void lazyLoad();
-    public abstract void finishCreateView(Bundle state);
+    protected abstract void finishCreateView(Bundle state);
 }
