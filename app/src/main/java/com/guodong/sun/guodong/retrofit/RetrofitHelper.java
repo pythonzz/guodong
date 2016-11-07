@@ -123,7 +123,8 @@ public class RetrofitHelper
                     sInstance = new RetrofitHelper();
                 }
             }
-        } return sInstance;
+        }
+        return sInstance;
     }
 
     private RetrofitHelper()

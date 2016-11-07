@@ -13,7 +13,7 @@ import com.guodong.sun.guodong.R;
  * App辅助类
  * @author Sun
  */
-public final class AppUtil
+public class AppUtil
 {
     // Suppress default constructor for noninstantiability
     private AppUtil()

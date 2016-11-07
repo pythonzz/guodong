@@ -1,7 +1,5 @@
 package com.guodong.sun.guodong.uitls;
 
-import android.content.res.Resources;
-
 /**
  * Created by Administrator on 2016/10/13.
  */
