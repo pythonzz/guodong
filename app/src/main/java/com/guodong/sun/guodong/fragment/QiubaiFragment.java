@@ -92,7 +92,7 @@ public class QiubaiFragment extends AbsBaseFragment implements IQiubaiView
                 mAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 mAnimator.setRepeatMode(ValueAnimator.RESTART);
                 mAnimator.start();
-                mRecyclerView.smoothScrollToPosition(0);
+                mRecyclerView.scrollToPosition(0);
                 isRefreshing = true;
                 mQiubaiPresenter.getQiubaiData(1);
             }

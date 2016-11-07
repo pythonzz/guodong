@@ -91,7 +91,7 @@ public class VideoFragment extends AbsBaseFragment implements IVideoView
                 mAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 mAnimator.setRepeatMode(ValueAnimator.RESTART);
                 mAnimator.start();
-                mRecyclerView.smoothScrollToPosition(0);
+                mRecyclerView.scrollToPosition(0);
                 isRefreshing = true;
                 mVideoPresenter.getVideoData(1);
             }

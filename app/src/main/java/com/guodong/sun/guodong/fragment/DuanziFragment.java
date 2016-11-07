@@ -91,7 +91,7 @@ public class DuanziFragment extends AbsBaseFragment implements IDuanziView
                 mAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 mAnimator.setRepeatMode(ValueAnimator.RESTART);
                 mAnimator.start();
-                mRecyclerView.smoothScrollToPosition(0);
+                mRecyclerView.scrollToPosition(0);
                 isRefreshing = true;
                 mDuanziPresenter.getDuanziData(1);
             }
