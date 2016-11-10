@@ -12,6 +12,7 @@ import com.guodong.sun.guodong.adapter.MeiziAdapter;
 import com.guodong.sun.guodong.adapter.QiubaiAdapter;
 import com.guodong.sun.guodong.base.AbsBaseFragment;
 import com.guodong.sun.guodong.entity.qiubai.QiuShiBaiKe;
+import com.guodong.sun.guodong.listener.OnRcvScrollListener;
 import com.guodong.sun.guodong.presenter.presenterImpl.QiubaiPersenterImpl;
 import com.guodong.sun.guodong.uitls.AppUtil;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
@@ -105,31 +106,17 @@ public class QiubaiFragment extends AbsBaseFragment implements IQiubaiView
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        mRecyclerView.addOnScrollListener(new OnRcvScrollListener()
         {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+            public void onBottom()
             {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) //向下滚动
+                super.onBottom();
+                if (!isLoading)
                 {
-                    WrapContentLinearLayoutManager llm = (WrapContentLinearLayoutManager) recyclerView.getLayoutManager();
-                    int visibleItemCount = llm.getChildCount();
-                    int totalItemCount = llm.getItemCount();
-                    int firstVisiblesItemPos = llm.findFirstVisibleItemPosition();
-
-                    if (!isLoading && (visibleItemCount + firstVisiblesItemPos) >= totalItemCount)
-                    {
-                        isLoading = true;
-                        page++;
-                        loadMoreDate();
-                    }
+                    isLoading = true;
+                    page++;
+                    loadMoreDate();
                 }
             }
         });

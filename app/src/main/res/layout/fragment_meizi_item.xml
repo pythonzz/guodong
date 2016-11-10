@@ -7,7 +7,7 @@
               android:foreground="@drawable/mid_grey_ripple"
               android:orientation="horizontal"
               android:background="@color/meizibg"
-              android:padding="10dp"
+              android:padding="3dp"
               android:stateListAnimator="@animator/raise">
 
     <android.support.v7.widget.CardView
@@ -25,17 +25,14 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-
-            <com.guodong.sun.guodong.widget.BadgedFourThreeImageView
+            <com.guodong.sun.guodong.widget.SquareCenterImageView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/meizi_iv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="2dp"
-                android:stateListAnimator="@animator/raise"
-                app:badgeGravity="end|bottom"
-                app:badgePadding="16dp"/>
+                android:stateListAnimator="@animator/raise"/>
 
         </LinearLayout>
 

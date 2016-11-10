@@ -9,54 +9,65 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.view.ViewCompat;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
-import com.guodong.sun.guodong.base.AbsBaseActivity;
 import com.guodong.sun.guodong.uitls.Once;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
+import com.guodong.sun.guodong.widget.ZoomImageView;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 
-import butterknife.BindView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by Administrator on 2016/10/11.
  */
 
-public class PictureActivity extends AbsBaseActivity
+public class PictureActivity extends RxAppCompatActivity
 {
+    private static final String TAG = "PictureActivity";
+
     public static final String EXTRA_IMAGE_URL = "image";
-    public static final String TRANSIT_PIC = "picture";
+    public static final String TRANSIT_LOCATIONX = "locationX";
+    public static final String TRANSIT_LOCATIONY = "locationY";
+    public static final String TRANSIT_WIDTH = "width";
+    public static final String TRANSIT_HEIGHT = "hieght";
 
-    String mImageUrl;
-    PhotoViewAttacher mPhotoViewAttacher;
+    private Bitmap mBitmap; // 保存图片时使用
+    private String mImageUrl;
+    private ZoomImageView mPicture;
+    private int mLocationX;
+    private int mLocationY;
+    private int mWidth;
+    private int mHeight;
 
-    @BindView(R.id.picture_layout)
-    RelativeLayout mLayout;
-
-    @BindView(R.id.picture_iv)
-    ImageView mPicture;
-
-    public static Intent newIntent(Context context, String url)
+    public static Intent newIntent(Context context, String url, int locationX, int locationY, int width, int height)
     {
         Intent intent = new Intent(context, PictureActivity.class);
         intent.putExtra(EXTRA_IMAGE_URL, url);
+        intent.putExtra(TRANSIT_LOCATIONX, locationX);
+        intent.putExtra(TRANSIT_LOCATIONY, locationY);
+        intent.putExtra(TRANSIT_WIDTH, width);
+        intent.putExtra(TRANSIT_HEIGHT, height);
         return intent;
     }
 
     @Override
-    protected void initViews(Bundle savedInstanceState)
+    protected void onCreate(@Nullable Bundle savedInstanceState)
     {
+        super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
             View decorView = getWindow().getDecorView();
@@ -64,15 +75,32 @@ public class PictureActivity extends AbsBaseActivity
             decorView.setSystemUiVisibility(option);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-        ViewCompat.setTransitionName(mPicture, TRANSIT_PIC);
         mImageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
+        mLocationX = getIntent().getIntExtra(TRANSIT_LOCATIONX, 0);
+        mLocationY = getIntent().getIntExtra(TRANSIT_LOCATIONY, 0);
+        mWidth = getIntent().getIntExtra(TRANSIT_WIDTH, 0);
+        mHeight = getIntent().getIntExtra(TRANSIT_HEIGHT, 0);
+
+        mPicture = new ZoomImageView(this);
+        mPicture.setOriginalInfo(mWidth, mHeight, mLocationX, mLocationY);
+        mPicture.transformIn();
+        mPicture.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
+        setContentView(mPicture);
+        setupPhotoAttacher();
         Glide.with(this)
                 .load(mImageUrl)
-                .crossFade(2000)
-                .centerCrop()
+                .asBitmap()
+                .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(mPicture);
-        setupPhotoAttacher();
+                .into(new SimpleTarget<Bitmap>()
+                {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
+                    {
+                        mBitmap = resource;
+                        mPicture.setImageBitmap(resource);
+                    }
+                });
         new Once(this).show("提示", new Once.OnceCallback()
         {
             @Override
@@ -83,68 +111,59 @@ public class PictureActivity extends AbsBaseActivity
         });
     }
 
-    @Override
-    protected int getLayoutId()
+    private void setupPhotoAttacher()
     {
-        return R.layout.activity_picture;
-    }
-
-    private void setupPhotoAttacher() {
-        mPhotoViewAttacher = new PhotoViewAttacher(mPicture);
-        mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener()
+        mPicture.setOnClickListener(new ZoomImageView.OnClickListener()
         {
             @Override
-            public void onViewTap(View view, float x, float y)
+            public void onClick(View v)
             {
                 onBackPressed();
+//                Toast.makeText(PictureActivity.this, "单击", Toast.LENGTH_SHORT).show();
             }
         });
 
-        mPhotoViewAttacher.setOnLongClickListener(new View.OnLongClickListener()
+        mPicture.setOnLongClickListener(new ZoomImageView.OnLongClickListener()
         {
             @Override
-            public boolean onLongClick(View view)
+            public void onLongClick(View v)
             {
                 createDialog();
-                return true;
             }
         });
     }
 
     private void createDialog()
     {
-        new AlertDialog.Builder(PictureActivity.this)
-                .setMessage("保存到手机?")
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        saveImage();
-                        dialogInterface.dismiss();
-                    }
-                })
-                .show();
+        new AlertDialog.Builder(PictureActivity.this).setMessage("保存到手机?").setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                dialogInterface.dismiss();
+            }
+        }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                saveImage();
+                dialogInterface.dismiss();
+            }
+        }).show();
     }
 
-    private void saveImage() {
+    private void saveImage()
+    {
         File externalStorageDirectory = Environment.getExternalStorageDirectory();
         File directory = new File(externalStorageDirectory, getString(R.string.app_name));
         if (!directory.exists())
             directory.mkdir();
-        Bitmap drawingCache = mPhotoViewAttacher.getImageView().getDrawingCache();
-        try {
+        try
+        {
             File file = new File(directory, new Date().getTime() + ".jpg");
             FileOutputStream fos = new FileOutputStream(file);
-            drawingCache.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();
             // 通知图库刷新
@@ -153,8 +172,10 @@ public class PictureActivity extends AbsBaseActivity
             intent.setData(uri);
             sendBroadcast(intent);
             SnackbarUtil.showMessage(mPicture, "已保存到" + file.getAbsolutePath());
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
+            Log.e(TAG, "saveImage: " + e.getMessage());
             SnackbarUtil.showMessage(mPicture, "啊偶, 出错了", "再试试", new View.OnClickListener()
             {
                 @Override
@@ -167,13 +188,21 @@ public class PictureActivity extends AbsBaseActivity
     }
 
     @Override
-    protected void onDestroy()
+    public void onBackPressed()
     {
-        super.onDestroy();
-        if (mPhotoViewAttacher != null)
+        mPicture.setOnTransformListener(new ZoomImageView.TransformListener()
         {
-            mPhotoViewAttacher.cleanup();
-            mPhotoViewAttacher = null;
-        }
+            @Override
+            public void onTransformComplete(int mode)
+            {
+                if (mode == 2)
+                {
+                    finish();
+                    overridePendingTransition(0, 0);
+                }
+            }
+        });
+        mPicture.transformOut();
     }
+
 }

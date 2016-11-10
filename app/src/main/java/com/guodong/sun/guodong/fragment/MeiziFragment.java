@@ -3,6 +3,7 @@ package com.guodong.sun.guodong.fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,11 +13,13 @@ import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.adapter.MeiziAdapter;
 import com.guodong.sun.guodong.base.AbsBaseFragment;
 import com.guodong.sun.guodong.entity.meizi.Meizi;
+import com.guodong.sun.guodong.listener.OnRcvScrollListener;
 import com.guodong.sun.guodong.presenter.presenterImpl.MeiziPresenterImpl;
 import com.guodong.sun.guodong.uitls.AppUtil;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.view.IMeiziView;
 import com.guodong.sun.guodong.widget.CustomEmptyView;
+import com.guodong.sun.guodong.widget.WrapContentGridLayoutManager;
 import com.guodong.sun.guodong.widget.WrapContentLinearLayoutManager;
 import com.melnykov.fab.FloatingActionButton;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -103,33 +106,19 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     {
         mAdapter = new MeiziAdapter(getContext());
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
+        mRecyclerView.setLayoutManager(new WrapContentGridLayoutManager(getContext(), 3));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        mRecyclerView.addOnScrollListener(new OnRcvScrollListener()
         {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+            public void onBottom()
             {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) //向下滚动
+                super.onBottom();
+                if (!isLoading)
                 {
-                    WrapContentLinearLayoutManager llm = (WrapContentLinearLayoutManager) recyclerView.getLayoutManager();
-                    int visibleItemCount = llm.getChildCount();
-                    int totalItemCount = llm.getItemCount();
-                    int firstVisiblesItemPos = llm.findFirstVisibleItemPosition();
-
-                    if (!isLoading && (visibleItemCount + firstVisiblesItemPos) >= totalItemCount)
-                    {
-                        isLoading = true;
-                        page++;
-                        loadMoreDate();
-                    }
+                    isLoading = true;
+                    page++;
+                    loadMoreDate();
                 }
             }
         });

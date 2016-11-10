@@ -18,6 +18,7 @@ import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.entity.meizi.Meizi;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
 import com.guodong.sun.guodong.widget.BadgedFourThreeImageView;
+import com.guodong.sun.guodong.widget.SquareCenterImageView;
 
 import java.util.ArrayList;
 
@@ -70,17 +71,12 @@ public class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziViewHol
             @Override
             public void onClick(View view)
             {
-                Intent intent = PictureActivity.newIntent(mContext, mMeiziLists.get(position).url);
-                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation((MainActivity) mContext, view, PictureActivity.TRANSIT_PIC);
-                try
-                {
-                    ActivityCompat.startActivity((MainActivity) mContext, intent, optionsCompat.toBundle());
-                } catch (IllegalArgumentException e)
-                {
-                    e.printStackTrace();
-                    mContext.startActivity(intent);
-                }
+                int[] location = new int[2];
+                view.getLocationOnScreen(location);
+                Intent intent = PictureActivity.newIntent(mContext, mMeiziLists.get(position).url,
+                        location[0], location[1] + 50, view.getWidth(), view.getHeight());
+                mContext.startActivity(intent);
+                ((MainActivity)mContext).overridePendingTransition(0, 0);
             }
         });
     }
@@ -136,7 +132,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziViewHol
     class MeiziViewHolder extends RecyclerView.ViewHolder
     {
         @BindView(R.id.meizi_iv)
-        BadgedFourThreeImageView imageView;
+        SquareCenterImageView imageView;
 
         View card;
 
