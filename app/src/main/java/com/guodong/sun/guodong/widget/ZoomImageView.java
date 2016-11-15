@@ -643,7 +643,7 @@ public class ZoomImageView extends ImageView implements ScaleGestureDetector.OnS
      *
      * @return
      */
-    public static int getStatusBarHeight(Context context)
+    private int getStatusBarHeight(Context context)
     {
         Class<?> c = null;
         Object obj = null;

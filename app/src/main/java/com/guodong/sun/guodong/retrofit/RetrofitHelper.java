@@ -112,7 +112,7 @@ public class RetrofitHelper
 
     private volatile static RetrofitHelper sInstance;
 
-    public static RetrofitHelper getsInstance()
+    public static RetrofitHelper getInstance()
     {
         if (sInstance == null)
         {

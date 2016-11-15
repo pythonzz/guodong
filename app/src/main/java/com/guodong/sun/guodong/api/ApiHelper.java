@@ -38,21 +38,21 @@ public class ApiHelper
 
     public GankApi getGankApi()
     {
-        return RetrofitHelper.getsInstance().createService(GankApi.class, MEIZI_BASE_URL);
+        return RetrofitHelper.getInstance().createService(GankApi.class, MEIZI_BASE_URL);
     }
 
     public DuanZiApi getDuanZiApi()
     {
-        return RetrofitHelper.getsInstance().createService(DuanZiApi.class, DUANZI_BASE_URL);
+        return RetrofitHelper.getInstance().createService(DuanZiApi.class, DUANZI_BASE_URL);
     }
 
     public QiuBaiApi getQiuBaiApi()
     {
-        return RetrofitHelper.getsInstance().createService(QiuBaiApi.class, QIUBAI_BASE_URL);
+        return RetrofitHelper.getInstance().createService(QiuBaiApi.class, QIUBAI_BASE_URL);
     }
 
     public ZhiHuApi getZhiHuApi()
     {
-        return RetrofitHelper.getsInstance().createService(ZhiHuApi.class, ZHIHU_BASE_URL);
+        return RetrofitHelper.getInstance().createService(ZhiHuApi.class, ZHIHU_BASE_URL);
     }
 }
