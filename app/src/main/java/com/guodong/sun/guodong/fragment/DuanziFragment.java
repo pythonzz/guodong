@@ -101,7 +101,7 @@ public class DuanziFragment extends AbsBaseFragment implements IDuanziView
 
     private void initRecyclerView()
     {
-        mAdapter = new DuanziAdapter(getContext());
+        mAdapter = new DuanziAdapter(getContext(), mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

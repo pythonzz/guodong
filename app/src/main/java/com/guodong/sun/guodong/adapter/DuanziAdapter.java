@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
-import com.guodong.sun.guodong.entity.qiubai.QiuShiBaiKe;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
+import com.guodong.sun.guodong.uitls.AnimatorUtils;
 import com.guodong.sun.guodong.uitls.DateTimeHelper;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 
@@ -36,10 +36,12 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
     private Context mContext;
     private LayoutInflater mInflater;
     private boolean isLoading;
+    private RecyclerView mRecyclerView;
 
-    public DuanziAdapter(Context context)
+    public DuanziAdapter(Context context, RecyclerView recyclerView)
     {
         mContext = context;
+        mRecyclerView = recyclerView;
         mInflater = LayoutInflater.from(context);
     }
 
@@ -59,6 +61,8 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
             holder.tvAuthor.setText(duanzi.getGroup().getUser().getName());
         holder.tvContent.setText(duanzi.getGroup().getText());
         holder.tvTime.setText(DateTimeHelper.getInterval(new Date((long) duanzi.getDisplay_time() * 1000)));
+
+        AnimatorUtils.startSlideInLeftAnimator(holder.view);
 
         holder.view.setOnClickListener(new View.OnClickListener()
         {
@@ -116,11 +120,19 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
                 return;
         }
 
+        int size = mDuanziLists.size();
         if (isLoading)
+        {
             mDuanziLists.addAll(list);
+            notifyItemRangeInserted(size, list.size());
+        }
         else
+        {
             mDuanziLists.addAll(0, list);
-        notifyDataSetChanged();
+            notifyItemRangeInserted(0, list.size());
+            mRecyclerView.scrollToPosition(0);
+        }
+//        notifyDataSetChanged();
     }
 
     public void clearDuanziList()
@@ -134,14 +146,14 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
         if (isLoading)
             return;
         isLoading = true;
-        notifyItemInserted(getLoadingMoreItemPosition());
+//        notifyItemInserted(getLoadingMoreItemPosition());
     }
 
     @Override
     public void onLoadFinish()
     {
         if (!isLoading) return;
-        notifyItemRemoved(getLoadingMoreItemPosition());
+//        notifyItemRemoved(getLoadingMoreItemPosition());
         isLoading = false;
     }
 

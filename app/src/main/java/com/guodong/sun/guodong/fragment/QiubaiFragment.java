@@ -102,7 +102,7 @@ public class QiubaiFragment extends AbsBaseFragment implements IQiubaiView
 
     private void initRecyclerView()
     {
-        mAdapter = new QiubaiAdapter(getContext());
+        mAdapter = new QiubaiAdapter(getContext(), mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

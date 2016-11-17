@@ -23,13 +23,10 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
 {
 
     private IMeiziView mMeiziView;
-    private CacheUtil mCacheUtil;
-    private Gson gson = new Gson();
 
     public MeiziPresenterImpl(Context context, IMeiziView mMeiziView)
     {
         this.mMeiziView = mMeiziView;
-        mCacheUtil = CacheUtil.get(context);
     }
 
     @Override
@@ -58,7 +55,6 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
                     public void onNext(MeiziList meiziList)
                     {
                         mMeiziView.hidProgressBar();
-                        mCacheUtil.put(Config.MEIZI, gson.toJson(meiziList));
                         mMeiziView.updateMeiziData(meiziList.getResults());
                     }
                 });

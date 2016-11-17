@@ -10,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.entity.qiubai.QiuShiBaiKe;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
+import com.guodong.sun.guodong.uitls.AnimatorUtils;
 import com.guodong.sun.guodong.uitls.DateTimeHelper;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 
@@ -37,10 +37,12 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
     private LayoutInflater mInflater;
     private Context mContext;
     private boolean isLoading;
+    private RecyclerView mRecyclerView;
 
-    public QiubaiAdapter(Context context)
+    public QiubaiAdapter(Context context, RecyclerView recyclerView)
     {
         this.mContext = context;
+        this.mRecyclerView = recyclerView;
         mInflater = LayoutInflater.from(context);
     }
 
@@ -60,6 +62,8 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
             holder.tvAuthor.setText(qiubai.getUser().getLogin());
         holder.tvContent.setText(qiubai.getContent());
         holder.tvTime.setText(DateTimeHelper.getInterval(new Date((long) qiubai.getCreated_at() * 1000)));
+
+        AnimatorUtils.startSlideInRightAnimator(holder.cardView);
 
         holder.cardView.setOnClickListener(new View.OnClickListener()
         {
@@ -118,11 +122,19 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
                 return;
         }
 
+        int size = mQiubaiLists.size();
         if (isLoading)
+        {
             mQiubaiLists.addAll(list);
+            notifyItemRangeInserted(size, list.size());
+        }
         else
+        {
             mQiubaiLists.addAll(0, list);
-        notifyDataSetChanged();
+            notifyItemRangeInserted(0, list.size());
+            mRecyclerView.scrollToPosition(0);
+        }
+//        notifyDataSetChanged();
     }
 
     public void clearQiubaiList()
@@ -136,7 +148,7 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
         if (isLoading)
             return;
         isLoading = true;
-        notifyItemInserted(getLoadingMoreItemPosition());
+//        notifyItemInserted(getLoadingMoreItemPosition());
     }
 
     @Override
@@ -144,7 +156,7 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
     {
         if (!isLoading)
             return;
-        notifyItemRemoved(getLoadingMoreItemPosition());
+//        notifyItemRemoved(getLoadingMoreItemPosition());
         isLoading = false;
     }
 

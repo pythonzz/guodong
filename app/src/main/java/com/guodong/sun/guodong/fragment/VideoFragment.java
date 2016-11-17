@@ -101,7 +101,7 @@ public class VideoFragment extends AbsBaseFragment implements IVideoView
 
     private void initRecyclerView()
     {
-        mAdapter = new VideoAdapter(getContext());
+        mAdapter = new VideoAdapter(getContext(), mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

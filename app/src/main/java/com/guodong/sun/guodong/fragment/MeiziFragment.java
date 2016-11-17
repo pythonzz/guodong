@@ -3,8 +3,6 @@ package com.guodong.sun.guodong.fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -20,7 +18,6 @@ import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.view.IMeiziView;
 import com.guodong.sun.guodong.widget.CustomEmptyView;
 import com.guodong.sun.guodong.widget.WrapContentGridLayoutManager;
-import com.guodong.sun.guodong.widget.WrapContentLinearLayoutManager;
 import com.melnykov.fab.FloatingActionButton;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -56,6 +53,7 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     private MeiziPresenterImpl mMeiziPresenter;
     private ObjectAnimator mAnimator;
 
+
     public static MeiziFragment newInstance()
     {
         return new MeiziFragment();
@@ -72,7 +70,6 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     {
         if (!isPrepared || !isVisible)
             return;
-        showProgressBar();
         initRecyclerView();
         initFButton();
         isPrepared = false;
@@ -135,14 +132,17 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     {
         isPrepared = true;
         mMeiziPresenter = new MeiziPresenterImpl(getContext(), this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         lazyLoad();
     }
 
     @Override
-    public void onDetach()
+    protected void onInvisible()
     {
-        super.onDetach();
-        mMeiziPresenter.unsubcrible();
+        super.onInvisible();
+        hidProgressBar();
+        if (mMeiziPresenter != null)
+            mMeiziPresenter.unsubcrible();
     }
 
     @Override
@@ -158,7 +158,6 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     public void showProgressBar()
     {
         isRefreshing = true;
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
@@ -166,7 +165,7 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
             public void onRefresh()
             {
                 isRefreshing = true;
-//                mAdapter.clearMeiziList();
+                //                mAdapter.clearMeiziList();
                 mMeiziPresenter.getMeiziData(1);
             }
         });
@@ -177,7 +176,8 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     {
         if (mAnimator != null)
             mAnimator.cancel();
-        mSwipeRefreshLayout.setRefreshing(false);
+        if (mSwipeRefreshLayout != null)
+            mSwipeRefreshLayout.setRefreshing(false);
         isRefreshing = false;
     }
 

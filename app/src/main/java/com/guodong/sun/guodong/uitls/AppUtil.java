@@ -28,7 +28,7 @@ public class AppUtil
      */
     public static Context getContext()
     {
-        return MyApplication.getsInstance();
+        return MyApplication.getInstance();
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.guodong.sun.guodong.adapter;
 
 import android.content.Context;
-import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +12,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.entity.duanzi.NeiHanVideo;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
+import com.guodong.sun.guodong.uitls.AnimatorUtils;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -32,10 +32,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private LayoutInflater mInflater;
     private boolean isLoading;
     private static String coverurl="http://p2.pstatp.com/large/";
+    private RecyclerView mRecyclerView;
 
-    public VideoAdapter(Context context)
+    public VideoAdapter(Context context, RecyclerView recyclerView)
     {
         mContext = context;
+        mRecyclerView = recyclerView;
         mInflater = LayoutInflater.from(context);
     }
 
@@ -48,6 +50,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     @Override
     public void onBindViewHolder(VideoViewHolder holder, int position)
     {
+
+        AnimatorUtils.startScaleInAnimator(holder.mCardView);
+
         NeiHanVideo.DataBean bean = mLists.get(position);
         boolean isSetUp = false;
         if(bean.getGroup() != null)
@@ -76,11 +81,19 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 return;
         }
 
+        int size = mLists.size();
         if (isLoading)
+        {
             mLists.addAll(list);
+            notifyItemRangeInserted(size, list.size());
+        }
         else
+        {
             mLists.addAll(0, list);
-        notifyDataSetChanged();
+            notifyItemRangeInserted(0, list.size());
+            mRecyclerView.scrollToPosition(0);
+        }
+//        notifyDataSetChanged();
     }
 
     public void clearDuanziList()
@@ -94,14 +107,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         if (isLoading)
             return;
         isLoading = true;
-        notifyItemInserted(getLoadingMoreItemPosition());
+//        notifyItemInserted(getLoadingMoreItemPosition());
     }
 
     @Override
     public void onLoadFinish()
     {
         if (!isLoading) return;
-        notifyItemRemoved(getLoadingMoreItemPosition());
+//        notifyItemRemoved(getLoadingMoreItemPosition());
         isLoading = false;
     }
 
@@ -116,9 +129,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         @BindView(R.id.video_player)
         JCVideoPlayerStandard mVideoPlayerStandard;
 
+        CardView mCardView;
+
         public VideoViewHolder(View itemView)
         {
             super(itemView);
+            mCardView = (CardView) itemView;
             ButterKnife.bind(this, itemView);
         }
     }
