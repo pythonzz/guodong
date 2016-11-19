@@ -1,4 +1,4 @@
-package com.guodong.sun.guodong;
+package com.guodong.sun.guodong.behavior;
 
 import android.animation.Animator;
 import android.content.Context;

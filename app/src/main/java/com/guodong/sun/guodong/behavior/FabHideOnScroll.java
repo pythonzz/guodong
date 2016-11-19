@@ -1,4 +1,4 @@
-package com.guodong.sun.guodong;
+package com.guodong.sun.guodong.behavior;
 
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
