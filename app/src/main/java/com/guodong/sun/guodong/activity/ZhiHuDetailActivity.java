@@ -208,7 +208,7 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
     }
 
     @Override
-    public void hidProgressBar()
+    public void hideProgressBar()
     {
 //        dimiss();
     }

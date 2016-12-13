@@ -48,14 +48,14 @@ public class VideoPresenterImpl extends BasePresenterImpl implements IVideoPrese
                     @Override
                     public void onError(Throwable e)
                     {
-                        mVideoView.hidProgressBar();
+                        mVideoView.hideProgressBar();
                         mVideoView.showError(e.getMessage());
                     }
 
                     @Override
                     public void onNext(VideoData data)
                     {
-                        mVideoView.hidProgressBar();
+                        mVideoView.hideProgressBar();
                         ArrayList<NeiHanVideo.DataBean> list = (ArrayList<NeiHanVideo.DataBean>) data.getData().getData();
                         mVideoView.updateVideoData(list);
                     }

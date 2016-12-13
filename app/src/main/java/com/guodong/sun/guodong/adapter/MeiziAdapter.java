@@ -2,30 +2,21 @@ package com.guodong.sun.guodong.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.guodong.sun.guodong.activity.MainActivity;
-import com.guodong.sun.guodong.activity.MyApplication;
-import com.guodong.sun.guodong.activity.PictureActivity;
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.activity.MainActivity;
+import com.guodong.sun.guodong.activity.PictureActivity;
 import com.guodong.sun.guodong.entity.meizi.Meizi;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
-import com.guodong.sun.guodong.widget.BadgedFourThreeImageView;
 import com.guodong.sun.guodong.widget.SquareCenterImageView;
-import com.litesuits.orm.db.model.ConflictAlgorithm;
 import com.nineoldandroids.animation.AnimatorInflater;
 import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.util.ArrayList;
 
@@ -64,17 +55,9 @@ public class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziViewHol
 
         Glide.with(mContext)
                 .load(mMeiziLists.get(position).url)
+                .dontAnimate()
                 .centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.imageView)
-                .getSize(new SizeReadyCallback()
-                {
-                    @Override
-                    public void onSizeReady(int width, int height)
-                    {
-                        if (!holder.card.isShown())
-                            holder.card.setVisibility(View.VISIBLE);
-                    }
-                });
+                .into(holder.imageView);
 
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(mContext, R.animator.zoom_in);
         set.setTarget(holder.imageView);

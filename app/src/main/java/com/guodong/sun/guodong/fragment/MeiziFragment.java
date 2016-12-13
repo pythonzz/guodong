@@ -140,7 +140,7 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     protected void onInvisible()
     {
         super.onInvisible();
-        hidProgressBar();
+        hideProgressBar();
         if (mMeiziPresenter != null)
             mMeiziPresenter.unsubcrible();
     }
@@ -172,12 +172,13 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     }
 
     @Override
-    public void hidProgressBar()
+    public void hideProgressBar()
     {
         if (mAnimator != null)
             mAnimator.cancel();
         if (mSwipeRefreshLayout != null)
             mSwipeRefreshLayout.setRefreshing(false);
+        isLoading = false;
         isRefreshing = false;
     }
 

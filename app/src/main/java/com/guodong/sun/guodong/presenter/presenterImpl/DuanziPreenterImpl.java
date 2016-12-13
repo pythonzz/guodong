@@ -55,14 +55,14 @@ public class DuanziPreenterImpl extends BasePresenterImpl implements IDuanziPres
                     @Override
                     public void onError(Throwable e)
                     {
-                        mDuanziView.hidProgressBar();
+                        mDuanziView.hideProgressBar();
                         mDuanziView.showError(e.getMessage());
                     }
 
                     @Override
                     public void onNext(NeiHanDuanZi list)
                     {
-                        mDuanziView.hidProgressBar();
+                        mDuanziView.hideProgressBar();
                         mCacheUtil.put(Config.DUANZI, gson.toJson(list));
                         ArrayList<NeiHanDuanZi.Data> datas = new ArrayList<>();
                         for (NeiHanDuanZi.Data data : list.getData().getData())

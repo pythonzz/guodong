@@ -171,11 +171,13 @@ public class DuanziFragment extends AbsBaseFragment implements IDuanziView
     }
 
     @Override
-    public void hidProgressBar()
+    public void hideProgressBar()
     {
         if (mAnimator != null)
             mAnimator.cancel();
-        mSwipeRefreshLayout.setRefreshing(false);
+        if (mSwipeRefreshLayout != null)
+            mSwipeRefreshLayout.setRefreshing(false);
+        isLoading = false;
         isRefreshing = false;
     }
 

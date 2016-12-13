@@ -183,9 +183,11 @@ public class ZhihuFragment extends AbsBaseFragment implements IZhihuView
     }
 
     @Override
-    public void hidProgressBar()
+    public void hideProgressBar()
     {
-        mSwipeRefreshLayout.setRefreshing(false);
+        if (mSwipeRefreshLayout != null)
+            mSwipeRefreshLayout.setRefreshing(false);
+        isLoading = false;
         isRefreshing = false;
     }
 

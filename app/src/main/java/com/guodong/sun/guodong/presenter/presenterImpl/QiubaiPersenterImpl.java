@@ -51,14 +51,14 @@ public class QiubaiPersenterImpl extends BasePresenterImpl implements IQiubaiPre
                     @Override
                     public void onError(Throwable e)
                     {
-                        mQiubaiView.hidProgressBar();
+                        mQiubaiView.hideProgressBar();
                         mQiubaiView.showError(e.getMessage());
                     }
 
                     @Override
                     public void onNext(QiuShiBaiKe qiuShiBaiKe)
                     {
-                        mQiubaiView.hidProgressBar();
+                        mQiubaiView.hideProgressBar();
                         mCacheUtil.put(Config.QIUBAI, gson.toJson(qiuShiBaiKe));
                         ArrayList<QiuShiBaiKe.Item> list = new ArrayList<>();
                         for (QiuShiBaiKe.Item item : qiuShiBaiKe.getItems())

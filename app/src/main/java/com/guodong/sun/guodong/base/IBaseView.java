@@ -8,7 +8,7 @@ public interface IBaseView
 {
     void showProgressBar();
 
-    void hidProgressBar();
+    void hideProgressBar();
 
     void showError(String error);
 }

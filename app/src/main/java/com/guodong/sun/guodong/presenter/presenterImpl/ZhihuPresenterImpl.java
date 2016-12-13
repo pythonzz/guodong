@@ -47,14 +47,14 @@ public class ZhihuPresenterImpl extends BasePresenterImpl implements IZhihuPrese
                     @Override
                     public void onError(Throwable e)
                     {
-                        mZhihuView.hidProgressBar();
+                        mZhihuView.hideProgressBar();
                         mZhihuView.showError(e.getMessage());
                     }
 
                     @Override
                     public void onNext(ZhihuDailyNews data)
                     {
-                        mZhihuView.hidProgressBar();
+                        mZhihuView.hideProgressBar();
                         mZhihuView.updateZhihuData(data.getStories());
                     }
                 });

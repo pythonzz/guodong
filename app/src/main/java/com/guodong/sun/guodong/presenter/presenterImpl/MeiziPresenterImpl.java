@@ -2,12 +2,9 @@ package com.guodong.sun.guodong.presenter.presenterImpl;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
-import com.guodong.sun.guodong.Config;
 import com.guodong.sun.guodong.api.ApiHelper;
 import com.guodong.sun.guodong.entity.meizi.MeiziList;
 import com.guodong.sun.guodong.presenter.IMeiziPresenter;
-import com.guodong.sun.guodong.uitls.CacheUtil;
 import com.guodong.sun.guodong.view.IMeiziView;
 
 import rx.Observer;
@@ -47,14 +44,14 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
                     @Override
                     public void onError(Throwable e)
                     {
-                        mMeiziView.hidProgressBar();
+                        mMeiziView.hideProgressBar();
                         mMeiziView.showError(e.getMessage());
                     }
 
                     @Override
                     public void onNext(MeiziList meiziList)
                     {
-                        mMeiziView.hidProgressBar();
+                        mMeiziView.hideProgressBar();
                         mMeiziView.updateMeiziData(meiziList.getResults());
                     }
                 });
