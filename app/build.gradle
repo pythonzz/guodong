@@ -77,4 +77,6 @@ dependencies {
     compile 'fm.jiecao:jiecaovideoplayer:4.6.5'
     // LargeImageView
     compile 'com.shizhefei:LargeImageView:1.0.4'
+    // okhttputils
+    compile 'com.zhy:okhttputils:2.6.2'
 }
