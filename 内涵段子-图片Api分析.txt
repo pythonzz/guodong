@@ -1,0 +1,97 @@
+http://ic.snssdk.com/neihan/stream/mix/v1/?mpic=1&webp=1&essence=1&content_type=-103&message_cursor=90948784&am_longitude=120.165698&am_latitude=35.977649&am_city=%E9%9D%92%E5%B2%9B%E5%B8%82&am_loc_time=1481630676074&count=30&min_time=1481628791&screen_width=720&iid=6553950040&device_id=32953984286&ac=wifi&channel=meizu&aid=7&app_name=joke_essay&version_code=580&version_name=5.8.0&device_platform=android&ssmix=a&device_type=m3&device_brand=Meizu&os_api=22&os_version=5.1&uuid=861851033698766&openudid=69544b2781e55ea0&manifest_version_code=580&resolution=720*1280&dpi=320&update_version_code=5804
+
+JSON
+
+	data
+
+		data
+
+			type
+
+				type = 1    真实数据
+				type = 5 Ad 游戏广告 -->  ad
+				type = 9 Ad 视频广告 -->  data
+
+
+			comments  图片下的神评论
+
+			group
+
+				user				 用户
+					name 			 用户名称
+					avatar_url		 用户头像地址
+
+				is_anonymous = false 是否匿名
+				digg_count = ？		 顶的次数
+				bury_count = ?		 踩的次数
+				repin_count = ?		 收藏的次数
+				comment_count = ?	 评论的条数
+				share_count = ?		 分享的次数
+				is_neihan_hot = false 是否是热门
+				content = text = ?	 内涵->内容
+
+
+				media_type = 4		多个图片
+				large_image_list	大图列表
+				thumb_image_list	缩略图列表
+				is_multi_image = 1	是否多个图片
+					url 			图片地址
+					url_list		图片地址列表 length = 3 不同的服务器						一种布局
+					height 			图片高度
+					width 			图片宽度
+					is_gif = false	是否为gif
+
+
+				media_type = 1		单个图片													一种布局
+				large_image 		大图
+				middle_image		中图
+					r_height = ？ 	图片的高度 -> 根据图片高度判断是否为长图?					一种布局(长图)
+					r_width = ？	图片的宽度
+					url_list		图片地址列表 length = 3 不同的服务器
+						url 		图片地址
+
+
+				media_type = 2		gif图片														一种布局
+				is_gif = 1			是否是gif
+
+
+				2
+				category_id = 2
+				category_name = "搞笑囧图"
+
+
+				10
+				category_id = 10
+				category_name = "爆笑GIF"
+
+
+				15
+				category_id = 15
+				category_name = "脑残对话"
+
+
+				59
+				category_id = 59
+				category_name = "突然觉得哪里不对"
+
+
+				77
+				category_id = 77
+				category_name = "奇葩新闻"
+
+
+				80
+				category_id = 80
+				category_name = "来自世界的恶意"
+
+
+				81
+				category_id = 81
+				category_name = "奇葩买卖家"
+
+
+				85
+				category_id = 85
+				category_name = "日式吐槽"
+
+				
