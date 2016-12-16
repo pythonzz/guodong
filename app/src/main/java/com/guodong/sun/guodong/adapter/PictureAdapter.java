@@ -208,8 +208,9 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         // ----------------------------------------------------------
 
-//        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.mImageView.getLayoutParams();
-//        lp.width =
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.mImageView.getLayoutParams();
+        lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
+        holder.mImageView.setLayoutParams(lp);
 
         Glide.with(mContext)
                 .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
@@ -225,6 +226,10 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         displayTopAndBottom(holder, bean);
 
         // ----------------------------------------------------------
+
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.mImageView.getLayoutParams();
+        lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
+        holder.mImageView.setLayoutParams(lp);
 
         Glide.with(mContext)
                 .load(bean.getLarge_image().getUrl_list().get(0).getUrl())
