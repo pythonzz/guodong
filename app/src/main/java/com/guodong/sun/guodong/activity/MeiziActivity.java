@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -35,7 +34,7 @@ import java.util.Date;
  * Created by Administrator on 2016/10/11.
  */
 
-public class PictureActivity extends RxAppCompatActivity
+public class MeiziActivity extends RxAppCompatActivity
 {
     private static final String TAG = "PictureActivity";
 
@@ -55,7 +54,7 @@ public class PictureActivity extends RxAppCompatActivity
 
     public static Intent newIntent(Context context, String url, int locationX, int locationY, int width, int height)
     {
-        Intent intent = new Intent(context, PictureActivity.class);
+        Intent intent = new Intent(context, MeiziActivity.class);
         intent.putExtra(EXTRA_IMAGE_URL, url);
         intent.putExtra(TRANSIT_LOCATIONX, locationX);
         intent.putExtra(TRANSIT_LOCATIONY, locationY);
@@ -137,7 +136,7 @@ public class PictureActivity extends RxAppCompatActivity
 
     private void createDialog()
     {
-        new AlertDialog.Builder(PictureActivity.this).setMessage("保存到手机?").setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+        new AlertDialog.Builder(MeiziActivity.this).setMessage("保存到手机?").setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)

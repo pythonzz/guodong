@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.PictureActivity"
+        <activity android:name=".activity.MeiziActivity"
                   android:theme="@style/Transparent"
                   android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>

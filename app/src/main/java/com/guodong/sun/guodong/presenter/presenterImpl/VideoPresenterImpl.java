@@ -56,7 +56,11 @@ public class VideoPresenterImpl extends BasePresenterImpl implements IVideoPrese
                     public void onNext(VideoData data)
                     {
                         mVideoView.hideProgressBar();
-                        ArrayList<NeiHanVideo.DataBean> list = (ArrayList<NeiHanVideo.DataBean>) data.getData().getData();
+                        ArrayList<NeiHanVideo.DataBean> list = new ArrayList<>();
+                        for (NeiHanVideo.DataBean bean : data.getData().getData()) {
+                            if (bean.getType() == 1)
+                                list.add(bean);
+                        }
                         mVideoView.updateVideoData(list);
                     }
                 });

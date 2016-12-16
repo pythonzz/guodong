@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.activity.MainActivity;
-import com.guodong.sun.guodong.activity.PictureActivity;
+import com.guodong.sun.guodong.activity.MeiziActivity;
 import com.guodong.sun.guodong.entity.meizi.Meizi;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
 import com.guodong.sun.guodong.widget.SquareCenterImageView;
@@ -70,7 +70,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziViewHol
             {
                 int[] location = new int[2];
                 view.getLocationOnScreen(location);
-                Intent intent = PictureActivity.newIntent(mContext, mMeiziLists.get(position).url,
+                Intent intent = MeiziActivity.newIntent(mContext, mMeiziLists.get(position).url,
                         location[0], location[1] + 50, view.getWidth(), view.getHeight());
                 mContext.startActivity(intent);
                 ((MainActivity)mContext).overridePendingTransition(0, 0);

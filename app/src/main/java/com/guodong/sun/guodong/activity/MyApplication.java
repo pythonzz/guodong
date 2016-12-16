@@ -1,10 +1,10 @@
 package com.guodong.sun.guodong.activity;
 
 import android.app.Application;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
-import com.guodong.sun.guodong.Config;
 import com.guodong.sun.guodong.CrashHandler;
-import com.litesuits.orm.LiteOrm;
 
 /**
  * Created by Administrator on 2016/9/19.
@@ -12,6 +12,8 @@ import com.litesuits.orm.LiteOrm;
 public class MyApplication extends Application
 {
     private static MyApplication sInstance;
+    public static int ScreenWidth;
+    public static int ScreenHeight;
 
     @Override
     public void onCreate()
@@ -21,6 +23,12 @@ public class MyApplication extends Application
         CrashHandler crashHandler = CrashHandler.sInstance;
         crashHandler.init(this);
         crashHandler.setDebug(true);
+
+        WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
+        ScreenWidth = outMetrics.widthPixels;
+        ScreenHeight = outMetrics.heightPixels;
     }
 
     public static MyApplication getInstance()

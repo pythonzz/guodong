@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.fragment.DuanziFragment;
 import com.guodong.sun.guodong.fragment.MeiziFragment;
+import com.guodong.sun.guodong.fragment.PictureFragment;
 import com.guodong.sun.guodong.fragment.QiubaiFragment;
 import com.guodong.sun.guodong.fragment.TestFragment;
 import com.guodong.sun.guodong.fragment.VideoFragment;
@@ -40,7 +41,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter
                     fragments[position] = ZhihuFragment.newInstance();
                     break;
                 case 1:
-                    fragments[position] = TestFragment.newInstance("头条", R.color.yellow);
+                    fragments[position] = PictureFragment.newInstance();
                     break;
                 case 2:
                     fragments[position] = MeiziFragment.newInstance();

@@ -8,16 +8,16 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import com.guodong.sun.guodong.R;
-import com.guodong.sun.guodong.adapter.MeiziAdapter;
+import com.guodong.sun.guodong.adapter.DuanziAdapter;
+import com.guodong.sun.guodong.adapter.PictureAdapter;
 import com.guodong.sun.guodong.base.AbsBaseFragment;
-import com.guodong.sun.guodong.entity.meizi.Meizi;
+import com.guodong.sun.guodong.entity.picture.Picture;
 import com.guodong.sun.guodong.listener.OnRcvScrollListener;
-import com.guodong.sun.guodong.presenter.presenterImpl.MeiziPresenterImpl;
+import com.guodong.sun.guodong.presenter.presenterImpl.PicturePreenterImpl;
 import com.guodong.sun.guodong.uitls.AppUtil;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
-import com.guodong.sun.guodong.view.IMeiziView;
-import com.guodong.sun.guodong.widget.CustomEmptyView;
-import com.guodong.sun.guodong.widget.WrapContentGridLayoutManager;
+import com.guodong.sun.guodong.view.IPictureView;
+import com.guodong.sun.guodong.widget.WrapContentLinearLayoutManager;
 import com.melnykov.fab.FloatingActionButton;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -27,42 +27,37 @@ import java.util.ArrayList;
 import butterknife.BindView;
 
 /**
- * Created by Administrator on 2016/10/9.
+ * Created by Administrator on 2016/10/10.
  */
 
-public class MeiziFragment extends AbsBaseFragment implements IMeiziView
+public class PictureFragment extends AbsBaseFragment implements IPictureView
 {
-    @BindView(R.id.meizi_swipe_refresh_layout)
+    @BindView(R.id.picture_swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @BindView(R.id.meizi_recycler)
+    @BindView(R.id.picture_recycler)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.meizi_fb)
+    @BindView(R.id.picture_fb)
     FloatingActionButton mFButton;
-
-    @BindView(R.id.empty_layout)
-    CustomEmptyView mCustomEmptyView;
 
     //RecycleView是否正在刷新
     private boolean isRefreshing = false;
     private boolean isLoading;
-    private int page = 1;
 
-    private MeiziAdapter mAdapter;
-    private MeiziPresenterImpl mMeiziPresenter;
+    private PicturePreenterImpl mPicturePreenter;
+    private PictureAdapter mAdapter;
     private ObjectAnimator mAnimator;
 
-
-    public static MeiziFragment newInstance()
+    public static PictureFragment newInstance()
     {
-        return new MeiziFragment();
+        return new PictureFragment();
     }
 
     @Override
     protected int getLayoutResId()
     {
-        return R.layout.fragment_meizi;
+        return R.layout.fragment_picture;
     }
 
     @Override
@@ -70,10 +65,11 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     {
         if (!isPrepared || !isVisible)
             return;
+        showProgressBar();
         initRecyclerView();
         initFButton();
         isPrepared = false;
-        mMeiziPresenter.getMeiziData(1);
+        mPicturePreenter.getPictureData();
     }
 
     private void initFButton()
@@ -94,16 +90,16 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
                 mAnimator.start();
                 mRecyclerView.scrollToPosition(0);
                 isRefreshing = true;
-                mMeiziPresenter.getMeiziData(1);
+                mPicturePreenter.getPictureData();
             }
         });
     }
 
     private void initRecyclerView()
     {
-        mAdapter = new MeiziAdapter(getContext());
+        mAdapter = new PictureAdapter(getContext(), mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new WrapContentGridLayoutManager(getContext(), 3));
+        mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(new OnRcvScrollListener()
         {
@@ -114,7 +110,6 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
                 if (!isLoading)
                 {
                     isLoading = true;
-                    page++;
                     loadMoreDate();
                 }
             }
@@ -124,31 +119,28 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     private void loadMoreDate()
     {
         mAdapter.onLoadStart();
-        mMeiziPresenter.getMeiziData(page);
+        mPicturePreenter.getPictureData();
     }
 
     @Override
     public void finishCreateView(Bundle state)
     {
         isPrepared = true;
-        mMeiziPresenter = new MeiziPresenterImpl(getContext(), this);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        mPicturePreenter = new PicturePreenterImpl(getContext(), this);
         lazyLoad();
     }
 
     @Override
-    protected void onInvisible()
+    public void onDetach()
     {
-        super.onInvisible();
-        hideProgressBar();
-//        if (mMeiziPresenter != null)
-//            mMeiziPresenter.unsubcrible();
+        super.onDetach();
+        mPicturePreenter.unsubcrible();
     }
 
     @Override
-    public void updateMeiziData(ArrayList<Meizi> list)
+    public void updatePictureData(ArrayList<Picture.DataBeanX.DataBean> list)
     {
-        hideEmptyView();
+        // 注意addList() 和 onLoadFinish()的调用顺序
         mAdapter.addLists(list);
         mAdapter.onLoadFinish();
         isLoading = false;
@@ -158,6 +150,7 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     public void showProgressBar()
     {
         isRefreshing = true;
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
@@ -165,8 +158,8 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
             public void onRefresh()
             {
                 isRefreshing = true;
-                //                mAdapter.clearMeiziList();
-                mMeiziPresenter.getMeiziData(1);
+//                mAdapter.clearDuanziList();
+                mPicturePreenter.getPictureData();
             }
         });
     }
@@ -185,15 +178,10 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     @Override
     public void showError(String error)
     {
-        initEmptyView();
+        initEmptyView(error);
     }
 
-    public void hideEmptyView()
-    {
-        mCustomEmptyView.setVisibility(View.GONE);
-    }
-
-    public void initEmptyView()
+    public void initEmptyView(String error)
     {
         if (!AppUtil.isNetworkConnected())
         {
@@ -202,18 +190,7 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
         else
         {
             mSwipeRefreshLayout.setRefreshing(false);
-            mCustomEmptyView.setVisibility(View.VISIBLE);
-            mCustomEmptyView.setEmptyImage(R.drawable.img_tips_error_load_error);
-            mCustomEmptyView.setEmptyText(getString(R.string.loaderror));
-            SnackbarUtil.showMessage(mRecyclerView, getString(R.string.noNetwork));
-            mCustomEmptyView.reload(new CustomEmptyView.ReloadOnClickListener()
-            {
-                @Override
-                public void reloadClick()
-                {
-                    mMeiziPresenter.getMeiziData(1);
-                }
-            });
+            SnackbarUtil.showMessage(mFButton, error);
         }
     }
 }
