@@ -45,7 +45,7 @@
         android:id="@+id/picture_item_iv11"
         android:layout_width="20dp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="30dp"
         android:layout_toRightOf="@id/picture_item_digg"
         android:src="@drawable/bury"/>
 
@@ -64,7 +64,7 @@
         android:id="@+id/picture_multi_item_iv12"
         android:layout_width="20dp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="30dp"
         android:layout_toRightOf="@id/picture_item_bury"
         android:src="@drawable/comment"/>
 
