@@ -13,6 +13,9 @@
 <p>
     <img src="https://github.com/guodongAndroid/guodong/blob/master/QQ%E5%9B%BE%E7%89%8720161118094617.gif" width="320"/>
 </p> 
+<p>
+    <img src="https://github.com/guodongAndroid/guodong/blob/master/picture.gif" width="320"/>
+</p>
 
 ## Contact - 联系
 Email or QQ：sun33919135@gmail.com
