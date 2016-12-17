@@ -22,7 +22,7 @@
     <string name="umeng_socialize_text_weixin_circle_key">微信朋友圈</string>
     <string name="umeng_socialize_text_weixin_fav_key">微信收藏</string>
     <string name="click_pic">点击查看长图</string>
-    <string name="picture_conut">%1$s/%2$s</string>
+    <string name="picture_conut">%1$d/%2$d</string>
 
     <string-array name="titles">
         <item>@string/zhihu</item>

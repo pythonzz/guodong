@@ -1,12 +1,7 @@
 package com.guodong.sun.guodong.adapter;
 
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,16 +16,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.activity.LongPictureActivity;
+import com.guodong.sun.guodong.activity.MultiPictureActivity;
 import com.guodong.sun.guodong.activity.MyApplication;
-import com.guodong.sun.guodong.activity.PictureActivity;
-import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
 import com.guodong.sun.guodong.entity.picture.Picture;
 import com.guodong.sun.guodong.entity.picture.ThumbImageList;
 import com.guodong.sun.guodong.glide.CircleImageTransform;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
-import com.guodong.sun.guodong.uitls.AnimatorUtils;
-import com.guodong.sun.guodong.uitls.DateTimeHelper;
-import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.guodong.sun.guodong.widget.NineGridImageView;
 import com.guodong.sun.guodong.widget.NineGridImageViewAdapter;
@@ -42,13 +34,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by Administrator on 2016/10/10.
@@ -139,6 +128,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * 绑定长图布局
+     *
      * @param holder
      * @param bean
      */
@@ -152,30 +142,34 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * 加载长图
+     *
      * @param holder
      * @param bean
      */
     private void diaplayLongImage(final LongItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
-        Glide.with(mContext)
-                .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
-                .asBitmap()
-                .placeholder(R.drawable.ic_default_image)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        //保存图片
-                        String fileName = mContext.getExternalCacheDir()
-                                + StringUtils.getUrlPicName(bean.getMiddle_image().getUrl_list().get(0).getUrl());
-                        FileBitmapDecoderFactory bitmap = new FileBitmapDecoderFactory(fileName);
-                        FileOutputStream fout = null;
-                        if (bitmap != null) {
-                            holder.mImageView.setImage(bitmap);
-                        } else {
+
+        //保存图片
+        final String fileName = mContext.getExternalCacheDir()
+                + StringUtils.getUrlPicName(bean.getMiddle_image().getUrl_list().get(0).getUrl());
+        final FileBitmapDecoderFactory bitmap = new FileBitmapDecoderFactory(fileName);
+
+        if (bitmap != null) {
+            holder.mImageView.setImage(bitmap);
+        } else {
+            Glide.with(mContext)
+                    .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
+                    .asBitmap()
+                    .placeholder(R.drawable.ic_default_image)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                            FileOutputStream fout = null;
                             try {
                                 fout = new FileOutputStream(fileName);
                                 resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-                                holder.mImageView.setImage(bitmap);
+                                holder.mImageView.setImage(new FileBitmapDecoderFactory(fileName));
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                             } finally {
@@ -186,8 +180,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 }
                             }
                         }
-                    }
-                });
+                    });
+        }
 
         holder.mImageView.setCriticalScaleValueHook(new LargeImageView.CriticalScaleValueHook() {
             @Override
@@ -205,7 +199,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 // TODO: 2016/12/15 长图的点击事件
-                PictureActivity.startActivity(mContext,
+                LongPictureActivity.startActivity(mContext,
                         bean.getMiddle_image().getUrl_list().get(0).getUrl());
             }
         });
@@ -214,7 +208,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 // TODO: 2016/12/15 长图的点击事件
-                PictureActivity.startActivity(mContext,
+                LongPictureActivity.startActivity(mContext,
                         bean.getMiddle_image().getUrl_list().get(0).getUrl());
             }
         });
@@ -222,10 +216,11 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * 绑定单张图片布局
+     *
      * @param holder
      * @param bean
      */
-    private void binItemImageViewHolder(ItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
+    private void binItemImageViewHolder(final ItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
 
         // ----------------------------------------------------------
@@ -234,14 +229,26 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
         holder.mImageView.setLayoutParams(lp);
 
+        final String url = bean.getMiddle_image().getUrl_list().get(0).getUrl();
+
+        holder.mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(url);
+                MultiPictureActivity.startActivity(mContext, 0, list);
+            }
+        });
+
         Glide.with(mContext)
-                .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
+                .load(url)
                 .placeholder(R.drawable.ic_default_image)
                 .into(holder.mImageView);
     }
 
     /**
      * 绑定GIF布局
+     *
      * @param holder
      * @param bean
      */
@@ -264,6 +271,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * 绑定多图布局
+     *
      * @param holder
      * @param bean
      */
@@ -294,6 +302,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * NineGirdImageView
+     *
      * @param holder
      * @param bean
      */
@@ -453,7 +462,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             @Override
             protected void onItemImageClick(Context context, int index, List<String> list) {
-                // TODO: 2016/12/17  
+                // TODO: 2016/12/17
+                MultiPictureActivity.startActivity(context, index, (ArrayList<String>) list);
             }
         };
 

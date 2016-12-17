@@ -32,7 +32,12 @@
                   android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>
 
-        <activity android:name=".activity.PictureActivity"
+        <activity android:name=".activity.LongPictureActivity"
+                  android:theme="@style/Transparent"
+                  android:screenOrientation="portrait"
+                  android:launchMode="singleTop"/>
+
+        <activity android:name=".activity.MultiPictureActivity"
                   android:theme="@style/Transparent"
                   android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>

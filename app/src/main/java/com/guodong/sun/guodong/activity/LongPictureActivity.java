@@ -46,12 +46,12 @@ import butterknife.ButterKnife;
  * Created by Administrator on 2016/12/16.
  */
 
-public class PictureActivity extends RxAppCompatActivity {
+public class LongPictureActivity extends RxAppCompatActivity {
 
     private static final String LONG_IMAGE_URL = "LONG_IMAGE_URL";
 
     public static void startActivity(Context context, String url) {
-        Intent intent = new Intent(context, PictureActivity.class);
+        Intent intent = new Intent(context, LongPictureActivity.class);
         intent.putExtra(LONG_IMAGE_URL, url);
         context.startActivity(intent);
         ((MainActivity)context).overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
@@ -111,7 +111,7 @@ public class PictureActivity extends RxAppCompatActivity {
                         FileOutputStream fout = null;
                         try {
                             //保存图片
-                            String fileName = PictureActivity.this.getExternalCacheDir()
+                            String fileName = LongPictureActivity.this.getExternalCacheDir()
                                     + StringUtils.getUrlPicName(long_image_url);
                             fout = new FileOutputStream(fileName);
                             resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
