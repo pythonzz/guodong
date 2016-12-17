@@ -15,11 +15,18 @@
 
         <include layout="@layout/fragment_picture_top"/>
 
-        <ImageView
+        <ProgressBar
+            android:id="@+id/fragment_picture_gifview_pb"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:progress="30"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_marginTop="10dp"/>
+
+        <pl.droidsonroids.gif.GifImageView
             android:id="@+id/fragment_picture_gifview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"/>
+            android:layout_height="wrap_content"/>
 
         <include layout="@layout/fragment_picture_bottom"/>
     </LinearLayout>

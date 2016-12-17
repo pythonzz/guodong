@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,6 +24,7 @@ import com.guodong.sun.guodong.entity.picture.Picture;
 import com.guodong.sun.guodong.entity.picture.ThumbImageList;
 import com.guodong.sun.guodong.glide.CircleImageTransform;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
+import com.guodong.sun.guodong.uitls.AlxGifHelper;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.guodong.sun.guodong.widget.NineGridImageView;
 import com.guodong.sun.guodong.widget.NineGridImageViewAdapter;
@@ -33,6 +35,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by Administrator on 2016/10/10.
@@ -108,15 +111,15 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 break;
 
             case GIF_IMAGE:
-                binGifImageViewHolder((GifItemViewHolder) holder, bean);
+                bindGifImageViewHolder((GifItemViewHolder) holder, bean);
                 break;
 
             case ITEM_IMAGE:
-                binItemImageViewHolder((ItemViewHolder) holder, bean);
+                bindItemImageViewHolder((ItemViewHolder) holder, bean);
                 break;
 
             case LONG_IMAGE:
-                binLongImageViewHolder((LongItemViewHolder) holder, bean);
+                bindLongImageViewHolder((LongItemViewHolder) holder, bean);
                 break;
         }
     }
@@ -127,7 +130,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param holder viewholder
      * @param bean bean
      */
-    private void binLongImageViewHolder(final LongItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
+    private void bindLongImageViewHolder(final LongItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
 
         // ----------------------------------------------------------
@@ -178,7 +181,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param holder viewholder
      * @param bean bean
      */
-    private void binItemImageViewHolder(final ItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
+    private void bindItemImageViewHolder(final ItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
 
         // ----------------------------------------------------------
@@ -210,7 +213,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param holder viewholder
      * @param bean bean
      */
-    private void binGifImageViewHolder(GifItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
+    private void bindGifImageViewHolder(GifItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
 
         // ----------------------------------------------------------
@@ -219,12 +222,9 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
         holder.mImageView.setLayoutParams(lp);
 
-        Glide.with(mContext)
-                .load(bean.getLarge_image().getUrl_list().get(0).getUrl())
-                .asGif()
-                .placeholder(R.drawable.ic_default_image)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.mImageView);
+        // TODO: 2016/12/17
+        AlxGifHelper.displayImage(bean.getLarge_image().getUrl_list().get(0).getUrl(),
+                holder.mImageView, holder.mProgressBar);
     }
 
     /**
@@ -372,7 +372,10 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     class GifItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_gifview)
-        ImageView mImageView;
+        GifImageView mImageView;
+
+        @BindView(R.id.fragment_picture_gifview_pb)
+        ProgressBar mProgressBar;
 
         GifItemViewHolder(View itemView) {
             super(itemView);
