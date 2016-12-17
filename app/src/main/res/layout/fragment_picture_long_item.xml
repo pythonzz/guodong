@@ -20,7 +20,7 @@
             android:layout_height="300dp"
             android:layout_marginTop="10dp">
 
-            <com.shizhefei.view.largeimage.LargeImageView
+            <ImageView
                 android:id="@+id/fragment_picture_item_iv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

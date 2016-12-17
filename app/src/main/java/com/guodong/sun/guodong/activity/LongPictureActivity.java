@@ -1,43 +1,35 @@
 package com.guodong.sun.guodong.activity;
 
-import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
-import android.transition.Fade;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
-import com.guodong.sun.guodong.entity.picture.Picture;
-import com.guodong.sun.guodong.uitls.AnimatorUtils;
+import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.shizhefei.view.largeimage.LargeImageView;
 import com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +41,7 @@ import butterknife.ButterKnife;
 public class LongPictureActivity extends RxAppCompatActivity {
 
     private static final String LONG_IMAGE_URL = "LONG_IMAGE_URL";
+    private static final String TAG = LongPictureActivity.class.getSimpleName();
 
     public static void startActivity(Context context, String url) {
         Intent intent = new Intent(context, LongPictureActivity.class);
@@ -58,6 +51,7 @@ public class LongPictureActivity extends RxAppCompatActivity {
     }
 
     private String long_image_url;
+    private Bitmap mBitmap;
 
     @BindView(R.id.picture_pager)
     LargeImageView mImageView;
@@ -101,6 +95,14 @@ public class LongPictureActivity extends RxAppCompatActivity {
             }
         });
 
+        mImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                createDialog();
+                return true;
+            }
+        });
+
         Glide.with(this)
                 .load(long_image_url)
                 .asBitmap()
@@ -108,6 +110,7 @@ public class LongPictureActivity extends RxAppCompatActivity {
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mBitmap = resource;
                         FileOutputStream fout = null;
                         try {
                             //保存图片
@@ -127,6 +130,60 @@ public class LongPictureActivity extends RxAppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void createDialog()
+    {
+        new AlertDialog.Builder(this).setMessage("保存到手机?").setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                dialogInterface.dismiss();
+            }
+        }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                saveImage();
+                dialogInterface.dismiss();
+            }
+        }).show();
+    }
+
+    private void saveImage()
+    {
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        File directory = new File(externalStorageDirectory, getString(R.string.app_name));
+        if (!directory.exists())
+            directory.mkdir();
+        try
+        {
+            File file = new File(directory, new Date().getTime() + ".jpg");
+            FileOutputStream fos = new FileOutputStream(file);
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+            // 通知图库刷新
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri uri = Uri.fromFile(file);
+            intent.setData(uri);
+            sendBroadcast(intent);
+            SnackbarUtil.showMessage(mImageView, "已保存到" + file.getAbsolutePath());
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.e(TAG, "saveImage: " + e.getMessage());
+            SnackbarUtil.showMessage(mImageView, "啊偶, 出错了", "再试试", new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    saveImage();
+                }
+            });
+        }
     }
 
     @Override

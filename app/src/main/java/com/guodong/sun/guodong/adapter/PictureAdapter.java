@@ -2,6 +2,7 @@ package com.guodong.sun.guodong.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -148,52 +149,57 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      */
     private void diaplayLongImage(final LongItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
 
-        //保存图片
-        final String fileName = mContext.getExternalCacheDir()
-                + StringUtils.getUrlPicName(bean.getMiddle_image().getUrl_list().get(0).getUrl());
-        final FileBitmapDecoderFactory bitmap = new FileBitmapDecoderFactory(fileName);
+//        holder.mImageView.setImage(R.drawable.ic_default_image);
+//
+//        Glide.with(mContext)
+//                .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
+//                .asBitmap()
+//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+//                .into(new SimpleTarget<Bitmap>() {
+//                    @Override
+//                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//                        //保存图片
+//                        String fileName = mContext.getExternalCacheDir()
+//                                + StringUtils.getUrlPicName(bean.getMiddle_image().getUrl_list().get(0).getUrl());
+//                        FileOutputStream fout = null;
+//                        try {
+//                            fout = new FileOutputStream(fileName);
+//                            resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+//                            holder.mImageView.setImage(new FileBitmapDecoderFactory(fileName));
+//                        } catch (FileNotFoundException e) {
+//                            e.printStackTrace();
+//                        } finally {
+//                            try {
+//                                if (fout != null) fout.close();
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                });
 
-        if (bitmap != null) {
-            holder.mImageView.setImage(bitmap);
-        } else {
-            Glide.with(mContext)
-                    .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
-                    .asBitmap()
-                    .placeholder(R.drawable.ic_default_image)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//        holder.mImageView.setCriticalScaleValueHook(new LargeImageView.CriticalScaleValueHook() {
+//            @Override
+//            public float getMinScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMinScale) {
+//                return 1;
+//            }
+//
+//            @Override
+//            public float getMaxScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMaxScale) {
+//                return 1;
+//            }
+//        });
 
-                            FileOutputStream fout = null;
-                            try {
-                                fout = new FileOutputStream(fileName);
-                                resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-                                holder.mImageView.setImage(new FileBitmapDecoderFactory(fileName));
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            } finally {
-                                try {
-                                    if (fout != null) fout.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
-        }
-
-        holder.mImageView.setCriticalScaleValueHook(new LargeImageView.CriticalScaleValueHook() {
-            @Override
-            public float getMinScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMinScale) {
-                return 1;
-            }
-
-            @Override
-            public float getMaxScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMaxScale) {
-                return 1;
-            }
-        });
+        Glide.with(mContext)
+                .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        holder.mImageView.setImageBitmap(Bitmap.createBitmap(resource, 0, 0, resource.getWidth(), 300));
+                    }
+                });
 
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -307,12 +313,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param bean
      */
     private void displayMultiImage(MultiItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
-        List<String> listUrl = new ArrayList<>();
-        List<ThumbImageList> list = bean.getLarge_image_list();
-        for (ThumbImageList thumbImageList : list) {
-            listUrl.add(thumbImageList.getUrl());
-        }
-        holder.mNineGridImageView.setImagesData(listUrl);
+        holder.mNineGridImageView.setImagesData(bean.getLarge_image_list());
     }
 
     private void setViewGone(View view) {
@@ -438,7 +439,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     class LongItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_item_iv)
-        LargeImageView mImageView;
+        ImageView mImageView;
 
         @BindView(R.id.fragment_picture_item_ll)
         LinearLayout mLinearLayout;
@@ -454,16 +455,24 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.picture_multi_nine)
         NineGridImageView mNineGridImageView;
 
-        private NineGridImageViewAdapter<String> mAdapter = new NineGridImageViewAdapter<String>() {
+        private NineGridImageViewAdapter<ThumbImageList> mAdapter = new NineGridImageViewAdapter<ThumbImageList>() {
             @Override
-            protected void onDisplayImage(Context context, ImageView imageView, String s) {
-                displayImageView(imageView, s);
+            protected void onDisplayImage(Context context, ImageView imageView, ThumbImageList s) {
+                displayImageView(imageView, s.getUrl());
             }
 
             @Override
-            protected void onItemImageClick(Context context, int index, List<String> list) {
-                // TODO: 2016/12/17
-                MultiPictureActivity.startActivity(context, index, (ArrayList<String>) list);
+            protected void onItemImageClick(Context context, int index, List<ThumbImageList> list) {
+                // TODO: 2016/12/17 多图为GIF的话暂时不能点击查看
+                if (list.get(index).is_gif()) {
+                    return;
+                }
+
+                ArrayList<String> listUrl = new ArrayList<>();
+                for (ThumbImageList thumbImageList : list) {
+                    listUrl.add(thumbImageList.getUrl());
+                }
+                MultiPictureActivity.startActivity(context, index,  listUrl);
             }
         };
 

@@ -1,7 +1,14 @@
 package com.guodong.sun.guodong.fragment;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +16,18 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.activity.MeiziActivity;
+import com.guodong.sun.guodong.activity.MultiPictureActivity;
+import com.guodong.sun.guodong.uitls.Once;
+import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.trello.rxlifecycle.components.support.RxFragment;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
 
 /**
  * Created by Administrator on 2016/12/17.
@@ -18,8 +35,10 @@ import com.trello.rxlifecycle.components.support.RxFragment;
 
 public class MultiPictureFragment extends RxFragment {
 
+    private static final String TAG = MultiPictureFragment.class.getSimpleName();
     private String mImageUrl;
     private ImageView mImageView;
+    private Bitmap mBitmap;
 
     public static MultiPictureFragment newInstance(String imageUrl) {
         MultiPictureFragment f = new MultiPictureFragment();
@@ -40,6 +59,15 @@ public class MultiPictureFragment extends RxFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mImageView = new ImageView(getContext());
         mImageView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
+
+        new Once(getContext()).show("提示", new Once.OnceCallback()
+        {
+            @Override
+            public void onOnce()
+            {
+                SnackbarUtil.showMessage(mImageView, "单击图片返回, 长按图片保存");
+            }
+        });
         return mImageView;
     }
 
@@ -47,9 +75,84 @@ public class MultiPictureFragment extends RxFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Glide.with(getContext())
                 .load(mImageUrl)
+                .asBitmap()
                 .placeholder(R.drawable.ic_default_image)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
-                .into(mImageView);
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mBitmap = resource;
+                        mImageView.setImageBitmap(resource);
+                    }
+                });
+
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MultiPictureActivity) getActivity()).onBackPressed();
+            }
+        });
+
+        mImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                createDialog();
+                return true;
+            }
+        });
+    }
+
+    private void createDialog()
+    {
+        new AlertDialog.Builder(getContext()).setMessage("保存到手机?").setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                dialogInterface.dismiss();
+            }
+        }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                saveImage();
+                dialogInterface.dismiss();
+            }
+        }).show();
+    }
+
+    private void saveImage()
+    {
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        File directory = new File(externalStorageDirectory, getString(R.string.app_name));
+        if (!directory.exists())
+            directory.mkdir();
+        try
+        {
+            File file = new File(directory, new Date().getTime() + ".jpg");
+            FileOutputStream fos = new FileOutputStream(file);
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+            // 通知图库刷新
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri uri = Uri.fromFile(file);
+            intent.setData(uri);
+            getContext().sendBroadcast(intent);
+            SnackbarUtil.showMessage(mImageView, "已保存到" + file.getAbsolutePath());
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.e(TAG, "saveImage: " + e.getMessage());
+            SnackbarUtil.showMessage(mImageView, "啊偶, 出错了", "再试试", new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    saveImage();
+                }
+            });
+        }
     }
 }
