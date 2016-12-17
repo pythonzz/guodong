@@ -2,7 +2,6 @@ package com.guodong.sun.guodong.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -28,12 +27,7 @@ import com.guodong.sun.guodong.uitls.StringUtils;
 import com.guodong.sun.guodong.widget.NineGridImageView;
 import com.guodong.sun.guodong.widget.NineGridImageViewAdapter;
 import com.guodong.sun.guodong.widget.SpacingTextView;
-import com.shizhefei.view.largeimage.LargeImageView;
-import com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,8 +124,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     /**
      * 绑定长图布局
      *
-     * @param holder
-     * @param bean
+     * @param holder viewholder
+     * @param bean bean
      */
     private void binLongImageViewHolder(final LongItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
@@ -144,55 +138,15 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     /**
      * 加载长图
      *
-     * @param holder
-     * @param bean
+     * @param holder viewholder
+     * @param bean bean
      */
     private void diaplayLongImage(final LongItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
-
-//        holder.mImageView.setImage(R.drawable.ic_default_image);
-//
-//        Glide.with(mContext)
-//                .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
-//                .asBitmap()
-//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-//                .into(new SimpleTarget<Bitmap>() {
-//                    @Override
-//                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-//                        //保存图片
-//                        String fileName = mContext.getExternalCacheDir()
-//                                + StringUtils.getUrlPicName(bean.getMiddle_image().getUrl_list().get(0).getUrl());
-//                        FileOutputStream fout = null;
-//                        try {
-//                            fout = new FileOutputStream(fileName);
-//                            resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-//                            holder.mImageView.setImage(new FileBitmapDecoderFactory(fileName));
-//                        } catch (FileNotFoundException e) {
-//                            e.printStackTrace();
-//                        } finally {
-//                            try {
-//                                if (fout != null) fout.close();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                });
-
-//        holder.mImageView.setCriticalScaleValueHook(new LargeImageView.CriticalScaleValueHook() {
-//            @Override
-//            public float getMinScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMinScale) {
-//                return 1;
-//            }
-//
-//            @Override
-//            public float getMaxScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMaxScale) {
-//                return 1;
-//            }
-//        });
 
         Glide.with(mContext)
                 .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
                 .asBitmap()
+                .placeholder(R.drawable.ic_default_image)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
@@ -204,7 +158,6 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 2016/12/15 长图的点击事件
                 LongPictureActivity.startActivity(mContext,
                         bean.getMiddle_image().getUrl_list().get(0).getUrl());
             }
@@ -213,7 +166,6 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 2016/12/15 长图的点击事件
                 LongPictureActivity.startActivity(mContext,
                         bean.getMiddle_image().getUrl_list().get(0).getUrl());
             }
@@ -223,8 +175,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     /**
      * 绑定单张图片布局
      *
-     * @param holder
-     * @param bean
+     * @param holder viewholder
+     * @param bean bean
      */
     private void binItemImageViewHolder(final ItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
@@ -255,8 +207,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     /**
      * 绑定GIF布局
      *
-     * @param holder
-     * @param bean
+     * @param holder viewholder
+     * @param bean bean
      */
     private void binGifImageViewHolder(GifItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
@@ -278,8 +230,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     /**
      * 绑定多图布局
      *
-     * @param holder
-     * @param bean
+     * @param holder viewholder
+     * @param bean bean
      */
     private void bindMultiImageViewHolder(MultiItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
@@ -309,8 +261,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     /**
      * NineGirdImageView
      *
-     * @param holder
-     * @param bean
+     * @param holder viewholder
+     * @param bean bean
      */
     private void displayMultiImage(MultiItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
         holder.mNineGridImageView.setImagesData(bean.getLarge_image_list());
@@ -318,14 +270,6 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private void setViewGone(View view) {
         view.setVisibility(View.GONE);
-    }
-
-    private void setViewVisible(View view) {
-        view.setVisibility(View.VISIBLE);
-    }
-
-    private void setViewInVisible(View view) {
-        view.setVisibility(View.INVISIBLE);
     }
 
     private void displayImageView(ImageView v, String url) {
@@ -408,7 +352,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.picture_item_comment)
         TextView item_comment;
 
-        public PictureViewHolder(View itemView) {
+        PictureViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -419,7 +363,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.fragment_picture_item_iv)
         ImageView mImageView;
 
-        public ItemViewHolder(View itemView) {
+        ItemViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(this, itemView);
         }
@@ -430,7 +374,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.fragment_picture_gifview)
         ImageView mImageView;
 
-        public GifItemViewHolder(View itemView) {
+        GifItemViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(this, itemView);
         }
@@ -444,7 +388,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.fragment_picture_item_ll)
         LinearLayout mLinearLayout;
 
-        public LongItemViewHolder(View itemView) {
+        LongItemViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(this, itemView);
         }
@@ -476,7 +420,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         };
 
-        public MultiItemViewHolder(View itemView) {
+        MultiItemViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(this, itemView);
             mNineGridImageView.setAdapter(mAdapter);
