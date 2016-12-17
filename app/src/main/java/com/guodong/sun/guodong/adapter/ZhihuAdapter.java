@@ -56,6 +56,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<ZhihuAdapter.ZhihuViewHol
         Glide.with(mContext)
                 .load(zhihu.getImages().get(0))
                 .bitmapTransform(new RoundedCornersTransformation(mContext, 10, 0))
+                .placeholder(R.drawable.ic_default_image)
                 .error(R.drawable.img_tips_error_load_error)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.mImageView);

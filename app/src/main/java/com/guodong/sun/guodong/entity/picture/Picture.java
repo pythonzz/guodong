@@ -1,5 +1,6 @@
 package com.guodong.sun.guodong.entity.picture;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -69,7 +70,7 @@ public class Picture {
                 this.comments = comments;
             }
 
-            public static class GroupBean {
+            public static class GroupBean implements Serializable {
 
                 private UserBean user;
                 private String text;

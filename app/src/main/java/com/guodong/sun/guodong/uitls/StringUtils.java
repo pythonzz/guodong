@@ -7,10 +7,11 @@ package com.guodong.sun.guodong.uitls;
 public class StringUtils {
 
     public static String getUrlPicName(String s) {
-        String str = null;
+        String str = "/guodong.webp";
         int index = s.lastIndexOf("/");
         if (index != -1) {
             str = s.substring(index, s.length());
+            return str;
         }
         return str;
     }

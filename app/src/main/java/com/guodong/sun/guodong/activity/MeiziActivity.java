@@ -36,7 +36,7 @@ import java.util.Date;
 
 public class MeiziActivity extends RxAppCompatActivity
 {
-    private static final String TAG = "PictureActivity";
+    private static final String TAG = "MeiziActivity";
 
     public static final String EXTRA_IMAGE_URL = "image";
     public static final String TRANSIT_LOCATIONX = "locationX";

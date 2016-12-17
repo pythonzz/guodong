@@ -32,6 +32,11 @@
                   android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>
 
+        <activity android:name=".activity.PictureActivity"
+                  android:theme="@style/Transparent"
+                  android:screenOrientation="portrait"
+                  android:launchMode="singleTop"/>
+
         <activity android:name=".activity.ZhiHuDetailActivity"
                   android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>

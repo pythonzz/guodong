@@ -56,7 +56,9 @@ public class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziViewHol
         Glide.with(mContext)
                 .load(mMeiziLists.get(position).url)
                 .dontAnimate()
-                .centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_default_image)
                 .into(holder.imageView);
 
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(mContext, R.animator.zoom_in);

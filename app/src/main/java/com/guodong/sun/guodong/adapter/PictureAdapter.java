@@ -22,6 +22,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.activity.MyApplication;
+import com.guodong.sun.guodong.activity.PictureActivity;
 import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
 import com.guodong.sun.guodong.entity.picture.Picture;
 import com.guodong.sun.guodong.entity.picture.ThumbImageList;
@@ -31,6 +32,8 @@ import com.guodong.sun.guodong.uitls.AnimatorUtils;
 import com.guodong.sun.guodong.uitls.DateTimeHelper;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.StringUtils;
+import com.guodong.sun.guodong.widget.NineGridImageView;
+import com.guodong.sun.guodong.widget.NineGridImageViewAdapter;
 import com.guodong.sun.guodong.widget.SpacingTextView;
 import com.shizhefei.view.largeimage.LargeImageView;
 import com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory;
@@ -144,28 +147,43 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         // ----------------------------------------------------------
 
+        diaplayLongImage(holder, bean);
+    }
+
+    /**
+     * 加载长图
+     * @param holder
+     * @param bean
+     */
+    private void diaplayLongImage(final LongItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
         Glide.with(mContext)
                 .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
                 .asBitmap()
+                .placeholder(R.drawable.ic_default_image)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        //保存图片
+                        String fileName = mContext.getExternalCacheDir()
+                                + StringUtils.getUrlPicName(bean.getMiddle_image().getUrl_list().get(0).getUrl());
+                        FileBitmapDecoderFactory bitmap = new FileBitmapDecoderFactory(fileName);
                         FileOutputStream fout = null;
-                        try {
-                            //保存图片
-                            String fileName = mContext.getExternalCacheDir()
-                                    + StringUtils.getUrlPicName(bean.getMiddle_image().getUrl_list().get(0).getUrl());
-                            fout = new FileOutputStream(fileName);
-                            resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-                            holder.mImageView.setImage(new FileBitmapDecoderFactory(fileName));
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } finally {
+                        if (bitmap != null) {
+                            holder.mImageView.setImage(bitmap);
+                        } else {
                             try {
-                                if (fout != null) fout.close();
-                            } catch (IOException e) {
+                                fout = new FileOutputStream(fileName);
+                                resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+                                holder.mImageView.setImage(bitmap);
+                            } catch (FileNotFoundException e) {
                                 e.printStackTrace();
+                            } finally {
+                                try {
+                                    if (fout != null) fout.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
@@ -187,6 +205,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 // TODO: 2016/12/15 长图的点击事件
+                PictureActivity.startActivity(mContext,
+                        bean.getMiddle_image().getUrl_list().get(0).getUrl());
             }
         });
 
@@ -194,6 +214,8 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 // TODO: 2016/12/15 长图的点击事件
+                PictureActivity.startActivity(mContext,
+                        bean.getMiddle_image().getUrl_list().get(0).getUrl());
             }
         });
     }
@@ -214,6 +236,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         Glide.with(mContext)
                 .load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
+                .placeholder(R.drawable.ic_default_image)
                 .into(holder.mImageView);
     }
 
@@ -234,6 +257,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         Glide.with(mContext)
                 .load(bean.getLarge_image().getUrl_list().get(0).getUrl())
                 .asGif()
+                .placeholder(R.drawable.ic_default_image)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.mImageView);
     }
@@ -269,80 +293,17 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     /**
-     * 后期重构 recyclerview
+     * NineGirdImageView
      * @param holder
      * @param bean
      */
     private void displayMultiImage(MultiItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
-        int size = bean.getLarge_image_list().size();
+        List<String> listUrl = new ArrayList<>();
         List<ThumbImageList> list = bean.getLarge_image_list();
-        if (size == 2) {
-            setViewGone(holder.mLinearLayout2);
-            setViewGone(holder.mLinearLayout3);
-            setViewInVisible(holder.mImageView3);
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-        } else if (size == 3) {
-            setViewGone(holder.mLinearLayout2);
-            setViewGone(holder.mLinearLayout3);
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-            displayImageView(holder.mImageView3, list.get(2).getUrl());
-        } else if (size == 4) {
-            setViewGone(holder.mLinearLayout3);
-            setViewInVisible(holder.mImageView3);
-            setViewInVisible(holder.mImageView6);
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-            displayImageView(holder.mImageView4, list.get(2).getUrl());
-            displayImageView(holder.mImageView5, list.get(3).getUrl());
-        } else if (size == 5) {
-            setViewGone(holder.mLinearLayout3);
-            setViewInVisible(holder.mImageView6);
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-            displayImageView(holder.mImageView3, list.get(2).getUrl());
-            displayImageView(holder.mImageView4, list.get(3).getUrl());
-            displayImageView(holder.mImageView5, list.get(4).getUrl());
-        } else if (size == 6) {
-            setViewGone(holder.mLinearLayout3);
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-            displayImageView(holder.mImageView3, list.get(2).getUrl());
-            displayImageView(holder.mImageView4, list.get(3).getUrl());
-            displayImageView(holder.mImageView5, list.get(4).getUrl());
-            displayImageView(holder.mImageView6, list.get(5).getUrl());
-        } else if (size == 7) {
-            setViewInVisible(holder.mImageView8);
-            setViewInVisible(holder.mImageView9);
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-            displayImageView(holder.mImageView3, list.get(2).getUrl());
-            displayImageView(holder.mImageView4, list.get(3).getUrl());
-            displayImageView(holder.mImageView5, list.get(4).getUrl());
-            displayImageView(holder.mImageView6, list.get(5).getUrl());
-            displayImageView(holder.mImageView7, list.get(6).getUrl());
-        } else if (size == 8) {
-            setViewInVisible(holder.mImageView9);
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-            displayImageView(holder.mImageView3, list.get(2).getUrl());
-            displayImageView(holder.mImageView4, list.get(3).getUrl());
-            displayImageView(holder.mImageView5, list.get(4).getUrl());
-            displayImageView(holder.mImageView6, list.get(5).getUrl());
-            displayImageView(holder.mImageView7, list.get(6).getUrl());
-            displayImageView(holder.mImageView8, list.get(7).getUrl());
-        } else if (size == 9) {
-            displayImageView(holder.mImageView1, list.get(0).getUrl());
-            displayImageView(holder.mImageView2, list.get(1).getUrl());
-            displayImageView(holder.mImageView3, list.get(2).getUrl());
-            displayImageView(holder.mImageView4, list.get(3).getUrl());
-            displayImageView(holder.mImageView5, list.get(4).getUrl());
-            displayImageView(holder.mImageView6, list.get(5).getUrl());
-            displayImageView(holder.mImageView7, list.get(6).getUrl());
-            displayImageView(holder.mImageView8, list.get(7).getUrl());
-            displayImageView(holder.mImageView9, list.get(8).getUrl());
+        for (ThumbImageList thumbImageList : list) {
+            listUrl.add(thumbImageList.getUrl());
         }
+        holder.mNineGridImageView.setImagesData(listUrl);
     }
 
     private void setViewGone(View view) {
@@ -361,6 +322,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         Glide.with(mContext)
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .placeholder(R.drawable.ic_default_image)
                 .into(v);
     }
 
@@ -480,45 +442,25 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     class MultiItemViewHolder extends PictureViewHolder {
 
-        @BindView(R.id.picture_multi_item_iv1)
-        ImageView mImageView1;
+        @BindView(R.id.picture_multi_nine)
+        NineGridImageView mNineGridImageView;
 
-        @BindView(R.id.picture_multi_item_iv2)
-        ImageView mImageView2;
+        private NineGridImageViewAdapter<String> mAdapter = new NineGridImageViewAdapter<String>() {
+            @Override
+            protected void onDisplayImage(Context context, ImageView imageView, String s) {
+                displayImageView(imageView, s);
+            }
 
-        @BindView(R.id.picture_multi_item_iv3)
-        ImageView mImageView3;
-
-        @BindView(R.id.picture_multi_item_iv4)
-        ImageView mImageView4;
-
-        @BindView(R.id.picture_multi_item_iv5)
-        ImageView mImageView5;
-
-        @BindView(R.id.picture_multi_item_iv6)
-        ImageView mImageView6;
-
-        @BindView(R.id.picture_multi_item_iv7)
-        ImageView mImageView7;
-
-        @BindView(R.id.picture_multi_item_iv8)
-        ImageView mImageView8;
-
-        @BindView(R.id.picture_multi_item_iv9)
-        ImageView mImageView9;
-
-        @BindView(R.id.picture_multi_item_ll1)
-        LinearLayout mLinearLayout1;
-
-        @BindView(R.id.picture_multi_item_ll2)
-        LinearLayout mLinearLayout2;
-
-        @BindView(R.id.picture_multi_item_ll3)
-        LinearLayout mLinearLayout3;
+            @Override
+            protected void onItemImageClick(Context context, int index, List<String> list) {
+                // TODO: 2016/12/17  
+            }
+        };
 
         public MultiItemViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(this, itemView);
+            mNineGridImageView.setAdapter(mAdapter);
         }
     }
 
