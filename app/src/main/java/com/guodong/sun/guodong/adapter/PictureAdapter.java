@@ -18,6 +18,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.activity.LongPictureActivity;
+import com.guodong.sun.guodong.activity.MultiGifActivity;
 import com.guodong.sun.guodong.activity.MultiPictureActivity;
 import com.guodong.sun.guodong.activity.MyApplication;
 import com.guodong.sun.guodong.entity.picture.Picture;
@@ -154,7 +155,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        holder.mImageView.setImageBitmap(Bitmap.createBitmap(resource, 0, 0, resource.getWidth(), 300));
+                        holder.mImageView.setImageBitmap(Bitmap.createBitmap(resource, 0, 0, resource.getWidth(), 500));
                     }
                 });
 
@@ -410,15 +411,17 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             @Override
             protected void onItemImageClick(Context context, int index, List<ThumbImageList> list) {
-                // TODO: 2016/12/17 多图为GIF的话暂时不能点击查看
-                if (list.get(index).is_gif()) {
-                    return;
-                }
-
                 ArrayList<String> listUrl = new ArrayList<>();
                 for (ThumbImageList thumbImageList : list) {
                     listUrl.add(thumbImageList.getUrl());
                 }
+
+                if (list.get(index).is_gif()) {
+                    MultiGifActivity.startActivity(context, index, listUrl,
+                            list.get(index).getWidth(), list.get(index).getHeight());
+                    return;
+                }
+
                 MultiPictureActivity.startActivity(context, index,  listUrl);
             }
         };

@@ -67,19 +67,19 @@ public class AlxGifHelper {
      * @param url
      * @param gifView
      */
-    public static void displayImage(final String url, GifImageView gifView, ProgressBar progressBar, TextView tvProgress) {
+    public static String displayImage(final String url, GifImageView gifView, ProgressBar progressBar, TextView tvProgress) {
         //首先查询一下这个gif是否已被缓存
         String md5Url = getMd5(url);
-        String path = gifView.getContext().getExternalCacheDir().getAbsolutePath() + "/" + md5Url;//带.tmp后缀的是没有下载完成的，用于加载第一帧，不带tmp后缀是下载完成的，
+        final String[] path = {gifView.getContext().getExternalCacheDir().getAbsolutePath() + "/" + md5Url};//带.tmp后缀的是没有下载完成的，用于加载第一帧，不带tmp后缀是下载完成的，
         //这样做的目的是为了防止一个图片正在下载的时候，另一个请求相同url的imageView使用未下载完毕的文件显示一半图像
-        Log.i("AlexGIF", "gif图片的缓存路径是" + path);
-        final File cacheFile = new File(path);
+        Log.i("AlexGIF", "gif图片的缓存路径是" + path[0]);
+        final File cacheFile = new File(path[0]);
         if (cacheFile.exists()) {//如果本地已经有了这个gif的缓存
             Log.i("AlexGIF", "本图片有缓存");
             if (displayImage(cacheFile, gifView)) {//如果本地缓存读取失败就重新联网下载
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (tvProgress != null) tvProgress.setVisibility(View.GONE);
-                return;
+                return path[0];
             }
         }
         //为了防止activity被finish了但是还有很多gif还没有加载完成，导致activity没有及时被内存回收导致内存泄漏，这里使用弱引用
@@ -91,7 +91,7 @@ public class AlxGifHelper {
             Log.i("AlexGIF", "以前有别的ImageView申请加载过该gif" + url);
             //可以借用以前的下载进度，不需要新建一个下载线程了
             memoryCache.get(url).add(new ProgressViews(imageViewWait, progressBarWait, textViewWait));
-            return;
+            return path[0];
         }
         if (memoryCache == null) memoryCache = new ConcurrentHashMap<>();
         if (memoryCache.get(url) == null) memoryCache.put(url, new ArrayList<ProgressViews>());
@@ -172,8 +172,10 @@ public class AlxGifHelper {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (tvProgress != null) tvProgress.setText("image download failed");
                 if (memoryCache != null) memoryCache.remove(url);//下载失败移除所有的弱引用
+                path[0] = null;
             }
         });
+        return path[0];
     }
 
     /**

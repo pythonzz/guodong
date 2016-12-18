@@ -3,6 +3,7 @@ package com.guodong.sun.guodong.fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,11 +19,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.activity.MeiziActivity;
 import com.guodong.sun.guodong.activity.MultiPictureActivity;
+import com.guodong.sun.guodong.glide.ProgressTarget;
 import com.guodong.sun.guodong.uitls.Once;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
+import com.shizhefei.view.largeimage.LargeImageView;
+import com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
 import java.io.File;
@@ -37,7 +43,7 @@ public class MultiPictureFragment extends RxFragment {
 
     private static final String TAG = MultiPictureFragment.class.getSimpleName();
     private String mImageUrl;
-    private ImageView mImageView;
+    private LargeImageView mImageView;
     private Bitmap mBitmap;
 
     public static MultiPictureFragment newInstance(String imageUrl) {
@@ -57,15 +63,28 @@ public class MultiPictureFragment extends RxFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mImageView = new ImageView(getContext());
+        mImageView = new LargeImageView(getContext());
         mImageView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
+
+        mImageView.setEnabled(true);
+        mImageView.setCriticalScaleValueHook(new LargeImageView.CriticalScaleValueHook() {
+            @Override
+            public float getMinScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMinScale) {
+                return 1;
+            }
+
+            @Override
+            public float getMaxScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMaxScale) {
+                return 2;
+            }
+        });
 
         new Once(getContext()).show("提示", new Once.OnceCallback()
         {
             @Override
             public void onOnce()
             {
-                SnackbarUtil.showMessage(mImageView, "单击图片返回, 长按图片保存");
+                SnackbarUtil.showMessage(mImageView, "单击图片返回, 双击放大, 长按图片保存");
             }
         });
         return mImageView;
@@ -75,14 +94,21 @@ public class MultiPictureFragment extends RxFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Glide.with(getContext())
                 .load(mImageUrl)
-                .asBitmap()
-                .placeholder(R.drawable.ic_default_image)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(new SimpleTarget<Bitmap>() {
+                .downloadOnly(new ProgressTarget<String, File>(mImageUrl, null) {
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        mBitmap = resource;
-                        mImageView.setImageBitmap(resource);
+                    public void onProgress(int progress) {
+                    }
+
+                    @Override
+                    public void onResourceReady(File resource, GlideAnimation<? super File> animation) {
+                        super.onResourceReady(resource, animation);
+                        mBitmap = BitmapFactory.decodeFile(resource.getPath());
+                        mImageView.setImage(new FileBitmapDecoderFactory(resource));
+                    }
+
+                    @Override
+                    public void getSize(SizeReadyCallback cb) {
+                        cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
                     }
                 });
 

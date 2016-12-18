@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,12 +15,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.glide.ProgressTarget;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.shizhefei.view.largeimage.LargeImageView;
@@ -105,29 +112,22 @@ public class LongPictureActivity extends RxAppCompatActivity {
 
         Glide.with(this)
                 .load(long_image_url)
-                .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(new SimpleTarget<Bitmap>() {
+                .downloadOnly(new ProgressTarget<String, File>(long_image_url, null) {
+
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        mBitmap = resource;
-                        FileOutputStream fout = null;
-                        try {
-                            //保存图片
-                            String fileName = LongPictureActivity.this.getExternalCacheDir()
-                                    + StringUtils.getUrlPicName(long_image_url);
-                            fout = new FileOutputStream(fileName);
-                            resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-                            mImageView.setImage(new FileBitmapDecoderFactory(fileName));
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } finally {
-                            try {
-                                if (fout != null) fout.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                    public void onProgress(int progress) {
+                    }
+
+                    @Override
+                    public void onResourceReady(File resource, GlideAnimation<? super File> animation) {
+                        super.onResourceReady(resource, animation);
+                        mImageView.setImage(new FileBitmapDecoderFactory(resource));
+                        mBitmap = BitmapFactory.decodeFile(resource.getPath());
+                    }
+
+                    @Override
+                    public void getSize(SizeReadyCallback cb) {
+                        cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
                     }
                 });
     }
