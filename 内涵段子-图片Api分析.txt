@@ -13,9 +13,14 @@ JSON
 				type = 9 Ad 视频广告 -->  data
 
 
-			comments  图片下的神评论
+			comments                图片下的神评论 Array
+			    text                神评内容
+			    user_name           神评人用户名称
+			    avatar_url          神评人头像
+			    digg_count          神评被赞的次数
+			    create_time         评论时间
 
-			group
+			group                   数据 Object
 
 				user				 用户
 					name 			 用户名称
@@ -53,6 +58,17 @@ JSON
 
 				media_type = 2		gif图片														一种布局
 				is_gif = 1			是否是gif
+				middle_image        gif图片的第一帧(缩略图,子内容同large_image)
+				large_image         gif图片地址(比较大1M以上,用于下载保存)
+				    width r_width   gif图片的宽度
+				    height r_height gif图片的高度
+				    url_list        gif图片地址列表
+				        url         gif图片地址
+				gifvideo            gif视频
+				    video_width     gif视频宽度
+				    video_height    gif视频高度
+				    mp4_url         gif视频480P地址
+				    duration        gif视频时长
 
 
 				2
