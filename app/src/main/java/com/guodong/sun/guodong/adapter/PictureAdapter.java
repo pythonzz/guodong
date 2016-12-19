@@ -214,7 +214,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param holder viewholder
      * @param bean bean
      */
-    private void bindGifImageViewHolder(GifItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
+    private void bindGifImageViewHolder(final GifItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
         displayTopAndBottom(holder, bean);
 
         // ----------------------------------------------------------
@@ -226,6 +226,16 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         // TODO: 2016/12/17
         AlxGifHelper.displayImage(bean.getLarge_image().getUrl_list().get(0).getUrl(),
                 holder.mImageView, holder.mProgressBar);
+
+        holder.mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlxGifHelper.saveGIF(holder.mImageView,
+                        bean.getLarge_image().getUrl_list().get(0).getUrl(),
+                        holder.mProgressBar);
+            }
+        });
+
     }
 
     /**

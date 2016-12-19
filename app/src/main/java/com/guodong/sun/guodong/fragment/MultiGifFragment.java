@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -36,6 +38,7 @@ import com.trello.rxlifecycle.components.support.RxFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -61,8 +64,6 @@ public class MultiGifFragment extends RxFragment {
 
     @BindView(R.id.progress_wheel)
     ProgressBar mProgressBar;
-
-    private Bitmap mBitmap;
 
     public static MultiGifFragment newInstance(String imageUrl, int width, int height) {
         MultiGifFragment f = new MultiGifFragment();
@@ -99,9 +100,9 @@ public class MultiGifFragment extends RxFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-//        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mGifImageView.getLayoutParams();
-//        lp.height = MyApplication.ScreenWidth * height / width;
-//        mGifImageView.setLayoutParams(lp);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mGifImageView.getLayoutParams();
+        lp.height = MyApplication.ScreenWidth * height / width;
+        mGifImageView.setLayoutParams(lp);
 
         final String path = AlxGifHelper.displayImage(mImageUrl, mGifImageView, mProgressBar, mTextView);
 
@@ -115,11 +116,7 @@ public class MultiGifFragment extends RxFragment {
         mGifImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (path != null) {
-                    mBitmap = BitmapFactory.decodeFile(path);
-                    if (mBitmap != null)
-                        createDialog();
-                }
+                createDialog();
                 return true;
             }
         });
@@ -135,38 +132,9 @@ public class MultiGifFragment extends RxFragment {
         }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                saveImage();
+                AlxGifHelper.saveGIF(mGifImageView, mImageUrl, mProgressBar);
                 dialogInterface.dismiss();
             }
         }).show();
-    }
-
-    private void saveImage() {
-        File externalStorageDirectory = Environment.getExternalStorageDirectory();
-        File directory = new File(externalStorageDirectory, getString(R.string.app_name));
-        if (!directory.exists())
-            directory.mkdir();
-        try {
-            File file = new File(directory, new Date().getTime() + ".gif");
-            FileOutputStream fos = new FileOutputStream(file);
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-            // 通知图库刷新
-            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            Uri uri = Uri.fromFile(file);
-            intent.setData(uri);
-            getContext().sendBroadcast(intent);
-            SnackbarUtil.showMessage(mGifImageView, "已保存到" + file.getAbsolutePath());
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "saveImage: " + e.getMessage());
-            SnackbarUtil.showMessage(mGifImageView, "啊偶, 出错了", "再试试", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    saveImage();
-                }
-            });
-        }
     }
 }

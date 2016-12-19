@@ -1,6 +1,9 @@
 package com.guodong.sun.guodong.uitls;
 
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -8,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.guodong.sun.guodong.R;
@@ -140,12 +144,12 @@ public class AlxGifHelper {
 
             public void onSuccess(File file) {
                 if (file == null) return;
-                String path = file.getAbsolutePath();
-                if (path == null || path.length() < 5) return;
-                File downloadFile = new File(path);
-                File renameFile = new File(path.substring(0, path.length() - 4));
-                if (path.endsWith(".tmp")) downloadFile.renameTo(renameFile);//将.tmp后缀去掉
-                Log.i("AlexGIF", "下载GIf成功,文件路径是" + path + " 重命名之后是" + renameFile.getAbsolutePath());
+                String filepath = file.getAbsolutePath();
+                if (filepath == null || filepath.length() < 5) return;
+                File downloadFile = new File(filepath);
+                File renameFile = new File(filepath.substring(0, filepath.length() - 4));
+                if (filepath.endsWith(".tmp")) downloadFile.renameTo(renameFile);//将.tmp后缀去掉
+                Log.i("AlexGIF", "下载GIf成功,文件路径是" + filepath + " 重命名之后是" + renameFile.getAbsolutePath());
                 if (memoryCache == null) return;
                 ArrayList<ProgressViews> viewArr = memoryCache.get(url);
                 if (viewArr == null || viewArr.size() == 0) return;
@@ -162,6 +166,7 @@ public class AlxGifHelper {
                 }
                 Log.i("AlexGIF", url + "的imageView已经全部加载完毕，共有" + viewArr.size() + "个");
                 memoryCache.remove(url);//这个url的全部关联imageView都已经显示完毕，清除缓存记录
+                path[0] = renameFile.getAbsolutePath();
             }
 
             @Override
@@ -334,13 +339,13 @@ public class AlxGifHelper {
     }
 
     public static abstract class DownLoadTask {
-        abstract void onStart();
+        protected abstract void onStart();
 
-        abstract void onLoading(long total, long current);
+        protected abstract void onLoading(long total, long current);
 
-        abstract void onSuccess(File target);
+        protected abstract void onSuccess(File target);
 
-        abstract void onFailure(Throwable e);
+        protected abstract void onFailure(Throwable e);
 
         boolean isCanceled;
     }
@@ -498,5 +503,56 @@ public class AlxGifHelper {
         } catch (IOException e) {
             Log.i("AlexGIF", "获取gif信息出现异常", e);
         }
+    }
+
+    public static void saveGIF(final View view, final String url, final ProgressBar mProgressBar) {
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        File directory = new File(externalStorageDirectory, view.getContext().getString(R.string.app_name));
+        File directoryGifCache = new File(directory, "gifCache");
+        if (!directoryGifCache.exists())
+            directoryGifCache.mkdirs();
+
+        File file = new File(directoryGifCache, AlxGifHelper.getMd5(url) + ".gif");
+
+        AlxGifHelper.startDownLoad(url, file, new AlxGifHelper.DownLoadTask() {
+            @Override
+            public void onStart() {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setProgress(0);
+                Toast.makeText(view.getContext(), "正在保存...", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected void onLoading(long total, long current) {
+                int progress = 0;
+                //得到要下载文件的大小，是通过http报文的header的Content-Length获得的，如果获取不到就是-1
+                if (total > 0) progress = (int) (current * 100 / total);
+                mProgressBar.setProgress(progress);
+            }
+
+            @Override
+            protected void onSuccess(File target) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+                // 通知图库刷新
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri uri = Uri.fromFile(target);
+                intent.setData(uri);
+                view.getContext().sendBroadcast(intent);
+                SnackbarUtil.showMessage(view, "已保存到" + target.getAbsolutePath());
+            }
+
+            @Override
+            protected void onFailure(Throwable e) {
+                Log.e("TAG", "saveImage: " + e.getMessage());
+                SnackbarUtil.showMessage(view, "啊偶, 出错了", "再试试", new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        saveGIF(view, url, mProgressBar);
+                    }
+                });
+            }
+        });
     }
 }
