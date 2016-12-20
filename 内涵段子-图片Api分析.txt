@@ -64,7 +64,7 @@ JSON
 				    height r_height gif图片的高度
 				    url_list        gif图片地址列表
 				        url         gif图片地址
-				gifvideo            gif视频(视频较小,几百kb,适合下载显示)
+				gifvideo            gif视频(视频较小,几百kb,适合下载显示,有可能没有这个字段，猜测：刚上传的GIF，后台还没有及时转换为视频)
 				    video_width     gif视频宽度
 				    video_height    gif视频高度
 				    mp4_url         gif视频480P地址
