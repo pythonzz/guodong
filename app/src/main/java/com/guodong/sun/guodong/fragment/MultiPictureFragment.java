@@ -39,6 +39,9 @@ import java.util.Date;
  * Created by Administrator on 2016/12/17.
  */
 
+/**
+ * 多图查看Fragment
+ */
 public class MultiPictureFragment extends RxFragment {
 
     private static final String TAG = MultiPictureFragment.class.getSimpleName();

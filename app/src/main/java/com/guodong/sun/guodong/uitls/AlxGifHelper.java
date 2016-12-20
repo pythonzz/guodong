@@ -38,31 +38,19 @@ public class AlxGifHelper {
 
 
     public static class ProgressViews {
+
+        public WeakReference<GifImageView> gifImageViewWeakReference;//gif显示控件
+        public WeakReference<ProgressBar> progressWheelWeakReference;//用来装饰的圆形进度条
+        public WeakReference<TextView> textViewWeakReference;//用来显示当前进度的文本框
+
         public ProgressViews(WeakReference<GifImageView> gifImageViewWeakReference, WeakReference<ProgressBar> progressWheelWeakReference, WeakReference<TextView> textViewWeakReference) {
             this.gifImageViewWeakReference = gifImageViewWeakReference;
             this.progressWheelWeakReference = progressWheelWeakReference;
             this.textViewWeakReference = textViewWeakReference;
         }
-
-        public WeakReference<GifImageView> gifImageViewWeakReference;//gif显示控件
-        public WeakReference<ProgressBar> progressWheelWeakReference;//用来装饰的圆形进度条
-        public WeakReference<TextView> textViewWeakReference;//用来显示当前进度的文本框
-    }
-
-    public static class ProgressViewsWithOutTV {
-        public ProgressViewsWithOutTV(WeakReference<GifImageView> gifImageViewWeakReference, WeakReference<ProgressBar> progressWheelWeakReference) {
-            this.gifImageViewWeakReference = gifImageViewWeakReference;
-            this.progressWheelWeakReference = progressWheelWeakReference;
-        }
-
-        public WeakReference<GifImageView> gifImageViewWeakReference;//gif显示控件
-        public WeakReference<ProgressBar> progressWheelWeakReference;//用来装饰的圆形进度条
     }
 
     public static ConcurrentHashMap<String, ArrayList<ProgressViews>> memoryCache;//防止同一个gif文件建立多个下载线程,url和imageView是一对多的关系,如果一个imageView建立了一次下载，那么其他请求这个url的imageView不需要重新开启一次新的下载，这几个imageView同时回调
-    //为了防止内存泄漏，这个一对多的关系均使用LRU缓存
-
-    public static ConcurrentHashMap<String, ArrayList<ProgressViewsWithOutTV>> memoryCacheWithOutTV;//防止同一个gif文件建立多个下载线程,url和imageView是一对多的关系,如果一个imageView建立了一次下载，那么其他请求这个url的imageView不需要重新开启一次新的下载，这几个imageView同时回调
     //为了防止内存泄漏，这个一对多的关系均使用LRU缓存
 
     /**
@@ -189,7 +177,7 @@ public class AlxGifHelper {
      * @param url
      * @param gifView
      */
-    public static void displayImage(final String url, GifImageView gifView, ProgressBar progressBar) {
+    public static void displayGif(final String url, GifImageView gifView, ProgressBar progressBar, TextView gif) {
         //首先查询一下这个gif是否已被缓存
         String md5Url = getMd5(url);
         String path = gifView.getContext().getExternalCacheDir().getAbsolutePath() + "/" + md5Url;//带.tmp后缀的是没有下载完成的，用于加载第一帧，不带tmp后缀是下载完成的，
@@ -207,17 +195,18 @@ public class AlxGifHelper {
         //为了防止activity被finish了但是还有很多gif还没有加载完成，导致activity没有及时被内存回收导致内存泄漏，这里使用弱引用
         final WeakReference<GifImageView> imageViewWait = new WeakReference<GifImageView>(gifView);
         final WeakReference<ProgressBar> progressBarWait = new WeakReference<ProgressBar>(progressBar);
-        gifView.setImageResource(R.drawable.ic_default_image);//设置没有下载完成前的默认图片
-        if (memoryCacheWithOutTV != null && memoryCacheWithOutTV.get(url) != null) {//如果以前有别的imageView加载过
+        final WeakReference<TextView> textViewWait = new WeakReference<TextView>(gif);
+//        gifView.setImageResource(R.drawable.ic_default_image);//设置没有下载完成前的默认图片
+        if (memoryCache != null && memoryCache.get(url) != null) {//如果以前有别的imageView加载过
             Log.i("AlexGIF", "以前有别的ImageView申请加载过该gif" + url);
             //可以借用以前的下载进度，不需要新建一个下载线程了
-            memoryCacheWithOutTV.get(url).add(new ProgressViewsWithOutTV(imageViewWait, progressBarWait));
+            memoryCache.get(url).add(new ProgressViews(imageViewWait, progressBarWait, textViewWait));
             return;
         }
-        if (memoryCacheWithOutTV == null) memoryCacheWithOutTV = new ConcurrentHashMap<>();
-        if (memoryCacheWithOutTV.get(url) == null) memoryCacheWithOutTV.put(url, new ArrayList<ProgressViewsWithOutTV>());
+        if (memoryCache == null) memoryCache = new ConcurrentHashMap<>();
+        if (memoryCache.get(url) == null) memoryCache.put(url, new ArrayList<ProgressViews>());
         //将现在申请加载的这个imageView放到缓存里，防止重复加载
-        memoryCacheWithOutTV.get(url).add(new ProgressViewsWithOutTV(imageViewWait, progressBarWait));
+        memoryCache.get(url).add(new ProgressViews(imageViewWait, progressBarWait, textViewWait));
 
 
         // 下载图片
@@ -237,10 +226,10 @@ public class AlxGifHelper {
                 int progress = 0;
                 //得到要下载文件的大小，是通过http报文的header的Content-Length获得的，如果获取不到就是-1
                 if (total > 0) progress = (int) (current * 100 / total);
-                ArrayList<ProgressViewsWithOutTV> viewses = memoryCacheWithOutTV.get(url);
+                ArrayList<ProgressViews> viewses = memoryCache.get(url);
                 if (viewses == null) return;
                 Log.i("AlexGIF", "该gif的请求数量是" + viewses.size());
-                for (ProgressViewsWithOutTV vs : viewses) {//遍历所有的进度条，修改同一个url请求的进度显示
+                for (ProgressViews vs : viewses) {//遍历所有的进度条，修改同一个url请求的进度显示
                     ProgressBar progressBar = vs.progressWheelWeakReference.get();
                     if (progressBar != null) {
                         progressBar.setProgress(progress);
@@ -263,10 +252,10 @@ public class AlxGifHelper {
                 File renameFile = new File(path.substring(0, path.length() - 4));
                 if (path.endsWith(".tmp")) downloadFile.renameTo(renameFile);//将.tmp后缀去掉
                 Log.i("AlexGIF", "下载GIf成功,文件路径是" + path + " 重命名之后是" + renameFile.getAbsolutePath());
-                if (memoryCacheWithOutTV == null) return;
-                ArrayList<ProgressViewsWithOutTV> viewArr = memoryCacheWithOutTV.get(url);
+                if (memoryCache == null) return;
+                ArrayList<ProgressViews> viewArr = memoryCache.get(url);
                 if (viewArr == null || viewArr.size() == 0) return;
-                for (ProgressViewsWithOutTV ws : viewArr) {//遍历所有的进度条和imageView，同时修改所有请求同一个url的进度
+                for (ProgressViews ws : viewArr) {//遍历所有的进度条和imageView，同时修改所有请求同一个url的进度
                     //显示imageView
                     GifImageView gifImageView = ws.gifImageViewWeakReference.get();
                     if (gifImageView != null)
@@ -274,9 +263,11 @@ public class AlxGifHelper {
                     //修改进度条
                     ProgressBar progressBar = ws.progressWheelWeakReference.get();
                     if (progressBar != null) progressBar.setVisibility(View.INVISIBLE);
+                    TextView textView = ws.textViewWeakReference.get();
+                    if (textView != null) textView.setVisibility(View.INVISIBLE);
                 }
                 Log.i("AlexGIF", url + "的imageView已经全部加载完毕，共有" + viewArr.size() + "个");
-                memoryCacheWithOutTV.remove(url);//这个url的全部关联imageView都已经显示完毕，清除缓存记录
+                memoryCache.remove(url);//这个url的全部关联imageView都已经显示完毕，清除缓存记录
             }
 
             @Override
@@ -284,7 +275,9 @@ public class AlxGifHelper {
                 Log.i("Alex", "下载gif图片出现异常", e);
                 ProgressBar progressBar = progressBarWait.get();
                 if (progressBar != null) progressBar.setVisibility(View.INVISIBLE);
-                if (memoryCacheWithOutTV != null) memoryCacheWithOutTV.remove(url);//下载失败移除所有的弱引用
+                TextView textView = textViewWait.get();
+                if (textView != null) textView.setVisibility(View.INVISIBLE);
+                if (memoryCache != null) memoryCache.remove(url);//下载失败移除所有的弱引用
             }
         });
     }

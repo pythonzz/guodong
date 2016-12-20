@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -219,20 +220,27 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         // ----------------------------------------------------------
 
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.mImageView.getLayoutParams();
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.mGifImageView.getLayoutParams();
         lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
-        holder.mImageView.setLayoutParams(lp);
+        holder.mGifImageView.setLayoutParams(lp);
+//        holder.mImageView.setLayoutParams(lp);
+
+        Glide.with(mContext).load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.mGifImageView);
 
         // TODO: 2016/12/17
-        AlxGifHelper.displayImage(bean.getLarge_image().getUrl_list().get(0).getUrl(),
-                holder.mImageView, holder.mProgressBar);
+        AlxGifHelper.displayGif(bean.getLarge_image().getUrl_list().get(0).getUrl(),
+                holder.mGifImageView, holder.mProgressBar, holder.mTextView);
 
-        holder.mImageView.setOnClickListener(new View.OnClickListener() {
+        final ArrayList<String> listurl = new ArrayList();
+        listurl.add(bean.getLarge_image().getUrl_list().get(0).getUrl());
+
+        holder.mGifImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlxGifHelper.saveGIF(holder.mImageView,
-                        bean.getLarge_image().getUrl_list().get(0).getUrl(),
-                        holder.mProgressBar);
+                MultiGifActivity.startActivity(mContext, 0, listurl,
+                        bean.getMiddle_image().getWidth(), bean.getMiddle_image().getHeight());
             }
         });
 
@@ -383,10 +391,13 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     class GifItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_gifview)
-        GifImageView mImageView;
+        GifImageView mGifImageView;
 
         @BindView(R.id.fragment_picture_gifview_pb)
         ProgressBar mProgressBar;
+
+        @BindView(R.id.fragment_picture_gifview_tv)
+        TextView mTextView;
 
         GifItemViewHolder(View itemView) {
             super(itemView);
@@ -417,6 +428,11 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             protected void onDisplayImage(Context context, ImageView imageView, ThumbImageList s) {
                 displayImageView(imageView, s.getUrl());
+            }
+
+            @Override
+            protected ImageView generateImageView(Context context) {
+                return super.generateImageView(context);
             }
 
             @Override

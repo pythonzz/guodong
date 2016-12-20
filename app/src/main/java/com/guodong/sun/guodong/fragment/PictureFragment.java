@@ -1,13 +1,16 @@
 package com.guodong.sun.guodong.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.activity.MainActivity;
 import com.guodong.sun.guodong.adapter.DuanziAdapter;
 import com.guodong.sun.guodong.adapter.PictureAdapter;
 import com.guodong.sun.guodong.base.AbsBaseFragment;
@@ -65,7 +68,7 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
     {
         if (!isPrepared || !isVisible)
             return;
-        showProgressBar();
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         initRecyclerView();
         initFButton();
         isPrepared = false;
@@ -150,7 +153,6 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
     public void showProgressBar()
     {
         isRefreshing = true;
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {

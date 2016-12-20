@@ -20,6 +20,7 @@ import com.flyco.tablayout.SlidingTabLayout;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.adapter.HomePagerAdapter;
 import com.guodong.sun.guodong.base.AbsBaseActivity;
+import com.guodong.sun.guodong.fragment.PictureFragment;
 import com.guodong.sun.guodong.glide.GlideCacheUtil;
 
 import butterknife.BindView;
@@ -65,6 +66,36 @@ public class MainActivity extends AbsBaseActivity {
         mViewPager.setOffscreenPageLimit(5);
         mViewPager.setAdapter(mHomeAdapter);
         mSlidingTab.setViewPager(mViewPager);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 1) {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setCancelable(false)
+                            .setTitle("提示")
+                            .setMessage("图片里的GIF很消耗流量,请尽量在WIFI下浏览")
+                            .setNegativeButton("去看段子", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    setViewPagerCurrent(5);
+                                }
+                            }).setPositiveButton("土豪随意", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
     @Override
@@ -118,6 +149,11 @@ public class MainActivity extends AbsBaseActivity {
         }).show();
     }
 
+    public void setViewPagerCurrent(@NonNull int pos) {
+        mViewPager.setCurrentItem(pos);
+    }
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -136,8 +172,11 @@ public class MainActivity extends AbsBaseActivity {
             if ((System.currentTimeMillis() - exitTime) > 2000) {
                 Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
-            } else
+            } else {
+                if (GlideCacheUtil.getInstance().getCacheSize(MainActivity.this).equals("50MB"))
+                    GlideCacheUtil.getInstance().clearImageAllCache(MainActivity.this);
                 super.onBackPressed();
+            }
         }
     }
 }

@@ -49,6 +49,9 @@ import pl.droidsonroids.gif.GifImageView;
  * Created by Administrator on 2016/12/17.
  */
 
+/**
+ * 多图为GIF查看的Fragment
+ */
 public class MultiGifFragment extends RxFragment {
 
     private static final String TAG = MultiGifFragment.class.getSimpleName();

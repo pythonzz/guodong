@@ -1,11 +1,14 @@
 package com.guodong.sun.guodong.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.app.AlertDialog;
 
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.activity.MainActivity;
 import com.guodong.sun.guodong.fragment.DuanziFragment;
 import com.guodong.sun.guodong.fragment.MeiziFragment;
 import com.guodong.sun.guodong.fragment.PictureFragment;
