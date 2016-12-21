@@ -23,6 +23,8 @@ import com.guodong.sun.guodong.base.AbsBaseActivity;
 import com.guodong.sun.guodong.fragment.PictureFragment;
 import com.guodong.sun.guodong.glide.GlideCacheUtil;
 
+import java.math.BigDecimal;
+
 import butterknife.BindView;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 
@@ -173,7 +175,8 @@ public class MainActivity extends AbsBaseActivity {
                 Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
             } else {
-                if (GlideCacheUtil.getInstance().getCacheSize(MainActivity.this).equals("50MB"))
+                String size = GlideCacheUtil.getInstance().getCacheSize(MainActivity.this);
+                if (Double.valueOf(size.substring(0, size.length() - 2)) >= 50)
                     GlideCacheUtil.getInstance().clearImageAllCache(MainActivity.this);
                 super.onBackPressed();
             }
