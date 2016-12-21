@@ -81,15 +81,6 @@ public class MultiPictureFragment extends RxFragment {
                 return 2;
             }
         });
-
-        new Once(getContext()).show("提示", new Once.OnceCallback()
-        {
-            @Override
-            public void onOnce()
-            {
-                SnackbarUtil.showMessage(mImageView, "单击图片返回, 双击放大, 长按图片保存");
-            }
-        });
         return mImageView;
     }
 

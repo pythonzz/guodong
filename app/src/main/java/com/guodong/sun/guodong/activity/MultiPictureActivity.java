@@ -20,6 +20,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.fragment.MultiPictureFragment;
+import com.guodong.sun.guodong.uitls.Once;
+import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.shizhefei.view.largeimage.LargeImageView;
 import com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory;
@@ -116,6 +118,14 @@ public class MultiPictureActivity extends RxAppCompatActivity {
 
         mViewPager.setCurrentItem(currentPos);
         mTextView.setText(getString(R.string.picture_conut, currentPos + 1, mListUrl.size()));
+        new Once(this).show("提示", new Once.OnceCallback()
+        {
+            @Override
+            public void onOnce()
+            {
+                SnackbarUtil.showMessage(mViewPager, "单击图片返回, 双击放大, 长按图片保存");
+            }
+        });
     }
 
     @Override

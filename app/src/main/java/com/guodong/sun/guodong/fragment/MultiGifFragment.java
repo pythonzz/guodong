@@ -91,12 +91,6 @@ public class MultiGifFragment extends RxFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_multi_gif, container, false);
         ButterKnife.bind(this, view);
-        new Once(getContext()).show("提示", new Once.OnceCallback() {
-            @Override
-            public void onOnce() {
-                SnackbarUtil.showMessage(mGifImageView, "单击图片返回, 双击放大, 长按图片保存");
-            }
-        });
         return view;
     }
 
