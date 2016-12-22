@@ -48,6 +48,11 @@ public class AlxGifHelper {
             this.progressWheelWeakReference = progressWheelWeakReference;
             this.textViewWeakReference = textViewWeakReference;
         }
+
+        public ProgressViews(WeakReference<GifImageView> gifImageViewWeakReference, WeakReference<ProgressBar> progressWheelWeakReference) {
+            this.gifImageViewWeakReference = gifImageViewWeakReference;
+            this.progressWheelWeakReference = progressWheelWeakReference;
+        }
     }
 
     public static ConcurrentHashMap<String, ArrayList<ProgressViews>> memoryCache;//防止同一个gif文件建立多个下载线程,url和imageView是一对多的关系,如果一个imageView建立了一次下载，那么其他请求这个url的imageView不需要重新开启一次新的下载，这几个imageView同时回调

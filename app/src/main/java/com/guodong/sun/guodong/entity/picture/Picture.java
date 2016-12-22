@@ -89,10 +89,27 @@ public class Picture {
                 private int digg_count;
                 private long group_id;
                 private MiddleImageBean middle_image;
+                private GifVideoBean gifvideo;
                 private int is_multi_image;
                 private int is_gif;
                 private List<ThumbImageList> thumb_image_list;
                 private List<ThumbImageList> large_image_list;
+
+                public boolean is_anonymous() {
+                    return is_anonymous;
+                }
+
+                public boolean is_neihan_hot() {
+                    return is_neihan_hot;
+                }
+
+                public GifVideoBean getGifvideo() {
+                    return gifvideo;
+                }
+
+                public void setGifvideo(GifVideoBean gifvideo) {
+                    this.gifvideo = gifvideo;
+                }
 
                 public int getIs_multi_image() {
                     return is_multi_image;
@@ -306,6 +323,36 @@ public class Picture {
                         public void setUrl(String url) {
                             this.url = url;
                         }
+                    }
+                }
+
+                public static class GifVideoBean {
+                    private int video_width;//   gif视频宽度
+                    private int video_height ;//   gif视频高度
+                    private String mp4_url   ;//      gif视频480P地址
+
+                    public int getVideo_width() {
+                        return video_width;
+                    }
+
+                    public void setVideo_width(int video_width) {
+                        this.video_width = video_width;
+                    }
+
+                    public int getVideo_height() {
+                        return video_height;
+                    }
+
+                    public void setVideo_height(int video_height) {
+                        this.video_height = video_height;
+                    }
+
+                    public String getMp4_url() {
+                        return mp4_url;
+                    }
+
+                    public void setMp4_url(String mp4_url) {
+                        this.mp4_url = mp4_url;
                     }
                 }
 

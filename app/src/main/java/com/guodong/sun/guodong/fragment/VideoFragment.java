@@ -115,9 +115,9 @@ public class VideoFragment extends AbsBaseFragment implements IVideoView
             @Override
             public void onChildViewDetachedFromWindow(View view)
             {
-                if (JCVideoPlayerManager.listener() != null)
+                if (JCVideoPlayerManager.getFirst() != null)
                 {
-                    JCVideoPlayer videoPlayer = (JCVideoPlayer) JCVideoPlayerManager.listener();
+                    JCVideoPlayer videoPlayer = (JCVideoPlayer) JCVideoPlayerManager.getFirst();
                     if (((ViewGroup) view).indexOfChild(videoPlayer) != -1 && videoPlayer.currentState == JCVideoPlayer.CURRENT_STATE_PLAYING)
                     {
                         JCVideoPlayer.releaseAllVideos();

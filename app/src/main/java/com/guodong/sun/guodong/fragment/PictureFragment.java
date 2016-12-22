@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 
 import com.guodong.sun.guodong.R;
@@ -28,6 +29,8 @@ import com.nineoldandroids.animation.ValueAnimator;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerManager;
 
 /**
  * Created by Administrator on 2016/10/10.
@@ -114,6 +117,27 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
                 {
                     isLoading = true;
                     loadMoreDate();
+                }
+            }
+        });
+
+        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener()
+        {
+            @Override
+            public void onChildViewAttachedToWindow(View view)
+            {
+            }
+
+            @Override
+            public void onChildViewDetachedFromWindow(View view)
+            {
+                if (JCVideoPlayerManager.getFirst() != null)
+                {
+                    JCVideoPlayer videoPlayer = (JCVideoPlayer) JCVideoPlayerManager.getFirst();
+                    if (((ViewGroup) view).indexOfChild(videoPlayer) != -1 && videoPlayer.currentState == JCVideoPlayer.CURRENT_STATE_PLAYING)
+                    {
+                        JCVideoPlayer.releaseAllVideos();
+                    }
                 }
             }
         });

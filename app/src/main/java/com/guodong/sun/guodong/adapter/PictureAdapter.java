@@ -31,12 +31,15 @@ import com.guodong.sun.guodong.uitls.StringUtils;
 import com.guodong.sun.guodong.widget.NineGridImageView;
 import com.guodong.sun.guodong.widget.NineGridImageViewAdapter;
 import com.guodong.sun.guodong.widget.SpacingTextView;
+import com.guodong.sun.guodong.widget.SunVideoPlayer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import pl.droidsonroids.gif.GifImageView;
 
 /**
@@ -47,6 +50,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private static final int MULTI_IMAGE = 4;
     private static final int GIF_IMAGE = 2;
+    private static final int GIF_MP4_IMAGE = 5;
     private static final int ITEM_IMAGE = 1;
     private static final int LONG_IMAGE = 3;
 
@@ -69,7 +73,9 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (bean.getIs_multi_image() == 1)
                 return MULTI_IMAGE;
         } else if (bean.getMedia_type() == GIF_IMAGE) {
-            if (bean.getIs_gif() == 1)
+            if (bean.getIs_gif() == 1 && bean.getGifvideo() != null)
+                return GIF_MP4_IMAGE;
+            else
                 return GIF_IMAGE;
         } else if (bean.getMedia_type() == ITEM_IMAGE
                 && bean.getMiddle_image().getR_height() < MyApplication.ScreenHeight) {
@@ -93,6 +99,10 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 holder = new GifItemViewHolder(mInflater.inflate(R.layout.fragment_picture_gif_item, parent, false));
                 break;
 
+            case GIF_MP4_IMAGE:
+                holder = new GifMp4ItemViewHolder(mInflater.inflate(R.layout.fragment_picture_gifmp4_item, parent, false));
+                break;
+
             case ITEM_IMAGE:
                 holder = new ItemViewHolder(mInflater.inflate(R.layout.fragment_picture_item, parent, false));
                 break;
@@ -114,6 +124,10 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             case GIF_IMAGE:
                 bindGifImageViewHolder((GifItemViewHolder) holder, bean);
+                break;
+
+            case GIF_MP4_IMAGE:
+                bindGifMp4ImageViewHolder((GifMp4ItemViewHolder) holder, bean);
                 break;
 
             case ITEM_IMAGE:
@@ -237,6 +251,75 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         listurl.add(bean.getLarge_image().getUrl_list().get(0).getUrl());
 
         holder.mGifImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MultiGifActivity.startActivity(mContext, 0, listurl,
+                        bean.getMiddle_image().getWidth(), bean.getMiddle_image().getHeight());
+            }
+        });
+
+    }
+
+    /**
+     * 绑定GIF MP4布局
+     *
+     * @param holder viewholder
+     * @param bean bean
+     */
+    private void bindGifMp4ImageViewHolder(final GifMp4ItemViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
+        displayTopAndBottom(holder, bean);
+
+        // ----------------------------------------------------------
+
+//        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.mGifVideo.getLayoutParams();
+//        lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
+//        holder.mGifVideo.setLayoutParams(lp);
+
+        Glide.with(mContext).load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.mGifVideo.thumbImageView);
+        holder.mGifVideo.looping = true;
+
+        // TODO: 2016/12/22
+        String url = bean.getGifvideo().getMp4_url();
+        String path = mContext.getExternalCacheDir().getAbsolutePath()
+                + File.separator + AlxGifHelper.getMd5(url) + ".mp4";
+        File fileMp4 = new File(path);
+        if (fileMp4.exists()) {
+            holder.mProgressBar.setVisibility(View.INVISIBLE);
+            holder.mGifVideo.setUp(path,
+                    JCVideoPlayerStandard.SCREEN_LAYOUT_LIST, "");
+        } else {
+            AlxGifHelper.startDownLoad(url, fileMp4, new AlxGifHelper.DownLoadTask() {
+                @Override
+                protected void onStart() {
+                    holder.mProgressBar.setVisibility(View.VISIBLE);
+                    holder.mProgressBar.setProgress(0);
+                }
+
+                @Override
+                protected void onLoading(long total, long current) {
+                    holder.mProgressBar.setProgress((int) (current * 100 / total));
+                }
+
+                @Override
+                protected void onSuccess(File target) {
+                    holder.mProgressBar.setVisibility(View.INVISIBLE);
+                    holder.mGifVideo.setUp(target.getAbsolutePath(),
+                            JCVideoPlayerStandard.SCREEN_LAYOUT_LIST, "");
+                }
+
+                @Override
+                protected void onFailure(Throwable e) {
+                    holder.mProgressBar.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
+
+        final ArrayList<String> listurl = new ArrayList();
+        listurl.add(bean.getLarge_image().getUrl_list().get(0).getUrl());
+
+        holder.mGifVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MultiGifActivity.startActivity(mContext, 0, listurl,
@@ -400,6 +483,20 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView mTextView;
 
         GifItemViewHolder(View itemView) {
+            super(itemView);
+//            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    class GifMp4ItemViewHolder extends PictureViewHolder {
+
+        @BindView(R.id.fragment_picture_gifmp4)
+        SunVideoPlayer mGifVideo;
+
+        @BindView(R.id.fragment_picture_gifmp4_pb)
+        ProgressBar mProgressBar;
+
+        GifMp4ItemViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(this, itemView);
         }
