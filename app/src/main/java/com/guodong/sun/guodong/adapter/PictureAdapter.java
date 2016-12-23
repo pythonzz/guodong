@@ -368,7 +368,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param bean bean
      */
     private void displayMultiImage(MultiItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
-        holder.mNineGridImageView.setImagesData(bean.getLarge_image_list());
+        holder.mNineGridImageView.setImagesData(bean.getThumb_image_list(), bean.getLarge_image_list());
     }
 
     private void setViewGone(View view) {

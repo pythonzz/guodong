@@ -15,12 +15,14 @@ import android.widget.Toast;
 
 
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.glide.GlideCacheUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -182,7 +184,7 @@ public class AlxGifHelper {
      * @param url
      * @param gifView
      */
-    public static void displayGif(final String url, GifImageView gifView, ProgressBar progressBar, TextView gif) {
+    public static void displayGif(final String url, GifImageView gifView, ProgressBar progressBar, final TextView gif) {
         //首先查询一下这个gif是否已被缓存
         String md5Url = getMd5(url);
         String path = gifView.getContext().getExternalCacheDir().getAbsolutePath() + "/" + md5Url;//带.tmp后缀的是没有下载完成的，用于加载第一帧，不带tmp后缀是下载完成的，
@@ -244,7 +246,7 @@ public class AlxGifHelper {
                         if (total == -1) progressBar.setProgress(20);//如果获取不到大小，就让进度条一直转
                     }
                     //显示第一帧直到全部下载完之后开始动画
-                    getFirstPicOfGIF(new File(cacheFile.getAbsolutePath() + ".tmp"), vs.gifImageViewWeakReference.get());
+//                    getFirstPicOfGIF(new File(cacheFile.getAbsolutePath() + ".tmp"), vs.gifImageViewWeakReference.get());
                 }
 
             }
@@ -291,15 +293,15 @@ public class AlxGifHelper {
     /**
      * 通过本地文件显示GIF文件
      *
-     * @param localFile    本地的文件指针
+     * @param is    本地的文件指针
      * @param gifImageView displayWidth imageView控件的宽度，用于根据gif的实际高度重设控件的高度来保证完整显示，传0表示不缩放gif的大小，显示原始尺寸
      */
-    public static boolean displayImage(File localFile, GifImageView gifImageView) {
-        if (localFile == null || gifImageView == null) return false;
-        Log.i("AlexGIF", "准备加载gif" + localFile.getAbsolutePath() + "显示宽度为");
+    public static boolean displayImage(File is, GifImageView gifImageView) {
+        if (is == null || gifImageView == null) return false;
+        Log.i("AlexGIF", "准备加载gif");
         GifDrawable gifFrom;
         try {
-            gifFrom = new GifDrawable(localFile);
+            gifFrom = new GifDrawable(is);
             gifImageView.setImageDrawable(gifFrom);
             return true;
         } catch (IOException e) {
@@ -342,7 +344,7 @@ public class AlxGifHelper {
 
         protected abstract void onLoading(long total, long current);
 
-        protected abstract void onSuccess(File target);
+        protected abstract void onSuccess(File file);
 
         protected abstract void onFailure(Throwable e);
 
@@ -353,10 +355,10 @@ public class AlxGifHelper {
      * 开启下载任务到线程池里，防止多并发线程过多
      *
      * @param uri
-     * @param targetFile
+     * @param os
      * @param task
      */
-    public static void startDownLoad(final String uri, final File targetFile, final DownLoadTask task) {
+    public static void startDownLoad(final String uri, final File os, final DownLoadTask task) {
         final Handler handler = new Handler();
         new AlxMultiTask<Void, Void, Void>() {//开启一个多线程池，大小为cpu数量+1
 
@@ -368,7 +370,7 @@ public class AlxGifHelper {
                         task.onStart();
                     }
                 });
-                downloadToStream(uri, targetFile, task, handler);
+                downloadToStream(uri, os, task, handler);
                 return null;
             }
         }.executeDependSDK();
@@ -379,18 +381,17 @@ public class AlxGifHelper {
      * 通过httpconnection下载一个文件，使用普通的IO接口进行读写
      *
      * @param uri
-     * @param targetFile
+     * @param file
      * @param task
      * @return
      */
-    public static long downloadToStream(String uri, final File targetFile, final DownLoadTask task, Handler handler) {
+    public static long downloadToStream(String uri, final File file, final DownLoadTask task, Handler handler) {
 
         if (task == null || task.isCanceled) return -1;
 
         HttpURLConnection httpURLConnection = null;
         BufferedInputStream bis = null;
-        OutputStream outputStream = null;
-
+        OutputStream os = null;
         long result = -1;
         long fileLen = 0;
         long currCount = 0;
@@ -398,7 +399,7 @@ public class AlxGifHelper {
 
             try {
                 final URL url = new URL(uri);
-                outputStream = new FileOutputStream(targetFile);
+                os = new FileOutputStream(file);
                 httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setConnectTimeout(20000);
                 httpURLConnection.setReadTimeout(10000);
@@ -428,7 +429,7 @@ public class AlxGifHelper {
 
             byte[] buffer = new byte[4096];//每4k更新进度一次
             int len = 0;
-            BufferedOutputStream out = new BufferedOutputStream(outputStream);
+            BufferedOutputStream out = new BufferedOutputStream(os);
             while ((len = bis.read(buffer)) != -1) {
                 out.write(buffer, 0, len);
                 currCount += len;
@@ -446,7 +447,7 @@ public class AlxGifHelper {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    task.onSuccess(targetFile);
+                    task.onSuccess(file);
                 }
             });
         } catch (final Throwable e) {

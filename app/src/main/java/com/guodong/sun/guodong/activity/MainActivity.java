@@ -76,23 +76,23 @@ public class MainActivity extends AbsBaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 1) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setCancelable(false)
-                            .setTitle("提示")
-                            .setMessage("图片里的GIF很消耗流量,请尽量在WIFI下浏览")
-                            .setNegativeButton("去看段子", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    setViewPagerCurrent(5);
-                                }
-                            }).setPositiveButton("土豪随意", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-                }
+//                if (position == 1) {
+//                    new AlertDialog.Builder(MainActivity.this)
+//                            .setCancelable(false)
+//                            .setTitle("提示")
+//                            .setMessage("图片里的GIF很消耗流量,请尽量在WIFI下浏览")
+//                            .setNegativeButton("去看段子", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    setViewPagerCurrent(5);
+//                                }
+//                            }).setPositiveButton("土豪随意", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    }).show();
+//                }
             }
             @Override
             public void onPageScrollStateChanged(int state) {

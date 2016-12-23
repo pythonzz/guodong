@@ -77,10 +77,8 @@ public class GlideCacheUtil {
      */
     public boolean clearImageAllCache(Context context) {
         String ImageExternalCacheDir = context.getExternalCacheDir().getAbsolutePath();
-        String ImageInternalCacheDir = context.getCacheDir().getAbsolutePath();
 
-        if (deleteFolderFile(ImageExternalCacheDir, true)
-                && deleteFolderFile(ImageInternalCacheDir, true))
+        if (deleteFolderFile(ImageExternalCacheDir, true))
             return true;
         else
             return false;

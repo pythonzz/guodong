@@ -29,7 +29,8 @@ public class NineGridImageView<T> extends ViewGroup {
     private int mGridSize;   // 宫格大小,即图片大小
 
     private List<ImageView> mImageViewList = new ArrayList<>();
-    private List<T> mImgDataList;
+    private List<T> mImgThumbDataList;
+    private List<T> mImgLargeDataList;
 
     private NineGridImageViewAdapter<T> mAdapter;
 
@@ -53,8 +54,8 @@ public class NineGridImageView<T> extends ViewGroup {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height;
         int totalWidth = width - getPaddingLeft() - getPaddingRight();
-        if (mImgDataList != null && mImgDataList.size() > 0) {
-            if (mImgDataList.size() == 1 && mSingleImgSize != -1) {
+        if (mImgThumbDataList != null && mImgThumbDataList.size() > 0) {
+            if (mImgThumbDataList.size() == 1 && mSingleImgSize != -1) {
                 mGridSize = mSingleImgSize > totalWidth ? totalWidth : mSingleImgSize;
             } else {
                 mImageViewList.get(0).setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -77,14 +78,14 @@ public class NineGridImageView<T> extends ViewGroup {
      * 布局 ImageView
      */
     private void layoutChildrenView() {
-        if (mImgDataList == null) {
+        if (mImgThumbDataList == null) {
             return;
         }
-        int childrenCount = mImgDataList.size();
+        int childrenCount = mImgThumbDataList.size();
         for (int i = 0; i < childrenCount; i++) {
             ImageView childrenView = (ImageView) getChildAt(i);
             if (mAdapter != null) {
-                mAdapter.onDisplayImage(getContext(), childrenView, mImgDataList.get(i));
+                mAdapter.onDisplayImage(getContext(), childrenView, mImgThumbDataList.get(i));
             }
             int rowNum = i / mColumnCount;
             int columnNum = i % mColumnCount;
@@ -100,26 +101,26 @@ public class NineGridImageView<T> extends ViewGroup {
     /**
      * 设置图片数据
      *
-     * @param lists 图片数据集合
+     * @param thumbLists 图片数据集合
      */
-    public void setImagesData(List lists) {
-        if (lists == null || lists.isEmpty()) {
+    public void setImagesData(List thumbLists, List largeLists) {
+        if (thumbLists == null || thumbLists.isEmpty()) {
             this.setVisibility(GONE);
             return;
         } else {
             this.setVisibility(VISIBLE);
         }
 
-        if (mMaxSize > 0 && lists.size() > mMaxSize) {
-            lists = lists.subList(0, mMaxSize);
+        if (mMaxSize > 0 && thumbLists.size() > mMaxSize) {
+            thumbLists = thumbLists.subList(0, mMaxSize);
         }
 
-        int[] gridParam = calculateGridParam(lists.size(), mShowStyle);
+        int[] gridParam = calculateGridParam(thumbLists.size(), mShowStyle);
         mRowCount = gridParam[0];
         mColumnCount = gridParam[1];
-        if (mImgDataList == null) {
+        if (mImgThumbDataList == null) {
             int i = 0;
-            while (i < lists.size()) {
+            while (i < thumbLists.size()) {
                 ImageView iv = getImageView(i);
                 if (iv == null) {
                     return;
@@ -128,8 +129,8 @@ public class NineGridImageView<T> extends ViewGroup {
                 i++;
             }
         } else {
-            int oldViewCount = mImgDataList.size();
-            int newViewCount = lists.size();
+            int oldViewCount = mImgThumbDataList.size();
+            int newViewCount = thumbLists.size();
             if (oldViewCount > newViewCount) {
                 removeViews(newViewCount, oldViewCount - newViewCount);
             } else if (oldViewCount < newViewCount) {
@@ -142,7 +143,8 @@ public class NineGridImageView<T> extends ViewGroup {
                 }
             }
         }
-        mImgDataList = lists;
+        mImgThumbDataList = thumbLists;
+        mImgLargeDataList = largeLists;
         requestLayout();
     }
 
@@ -162,7 +164,7 @@ public class NineGridImageView<T> extends ViewGroup {
                 imageView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mAdapter.onItemImageClick(getContext(), position, mImgDataList);
+                        mAdapter.onItemImageClick(getContext(), position, mImgLargeDataList);
                     }
                 });
                 return imageView;
