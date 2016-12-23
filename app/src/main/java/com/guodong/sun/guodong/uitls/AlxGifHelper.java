@@ -319,6 +319,7 @@ public class AlxGifHelper {
         MessageDigest md5 = null;
         try {
             md5 = MessageDigest.getInstance("MD5");
+            md5.update(str.getBytes());
             byte[] bs = md5.digest(str.getBytes());
             StringBuilder sb = new StringBuilder(40);
             for (byte x : bs) {
