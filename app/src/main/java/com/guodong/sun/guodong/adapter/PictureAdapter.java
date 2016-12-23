@@ -271,14 +271,15 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         // ----------------------------------------------------------
 
-//        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.mGifVideo.getLayoutParams();
-//        lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
-//        holder.mGifVideo.setLayoutParams(lp);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.mGifVideo.getLayoutParams();
+        lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
+        holder.mGifVideo.setLayoutParams(lp);
 
         Glide.with(mContext).load(bean.getMiddle_image().getUrl_list().get(0).getUrl())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.mGifVideo.thumbImageView);
-        holder.mGifVideo.looping = true;
+        holder.mGifVideo.looping = true; // 循环播放
+        holder.mGifVideo.audio = false; // 不获取音频服务
 
         // TODO: 2016/12/22
         String url = bean.getGifvideo().getMp4_url();
