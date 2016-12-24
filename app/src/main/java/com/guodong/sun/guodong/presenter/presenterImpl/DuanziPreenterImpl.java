@@ -9,6 +9,7 @@ import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
 import com.guodong.sun.guodong.presenter.IDuanziPresenter;
 import com.guodong.sun.guodong.uitls.CacheUtil;
 import com.guodong.sun.guodong.view.IDuanziView;
+import com.trello.rxlifecycle.LifecycleTransformer;
 
 import java.util.ArrayList;
 
@@ -27,11 +28,13 @@ public class DuanziPreenterImpl extends BasePresenterImpl implements IDuanziPres
     private IDuanziView mDuanziView;
     private CacheUtil mCacheUtil;
     private Gson gson = new Gson();
+    private LifecycleTransformer bind;
 
-    public DuanziPreenterImpl(Context context, IDuanziView mDuanziView)
+    public DuanziPreenterImpl(Context context, IDuanziView mDuanziView, LifecycleTransformer bind)
     {
         this.mDuanziView = mDuanziView;
         mCacheUtil = CacheUtil.get(context);
+        this.bind = bind;
     }
 
     @Override
@@ -42,6 +45,7 @@ public class DuanziPreenterImpl extends BasePresenterImpl implements IDuanziPres
                 .getInstance()
                 .getDuanZiApi()
                 .getDuanZiData(page)
+                .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<NeiHanDuanZi>()

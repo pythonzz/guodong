@@ -30,8 +30,7 @@ import butterknife.BindView;
  * Created by Administrator on 2016/10/9.
  */
 
-public class MeiziFragment extends AbsBaseFragment implements IMeiziView
-{
+public class MeiziFragment extends AbsBaseFragment implements IMeiziView {
     @BindView(R.id.meizi_swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -54,20 +53,17 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     private ObjectAnimator mAnimator;
 
 
-    public static MeiziFragment newInstance()
-    {
+    public static MeiziFragment newInstance() {
         return new MeiziFragment();
     }
 
     @Override
-    protected int getLayoutResId()
-    {
+    protected int getLayoutResId() {
         return R.layout.fragment_meizi;
     }
 
     @Override
-    protected void lazyLoad()
-    {
+    protected void lazyLoad() {
         if (!isPrepared || !isVisible)
             return;
         initRecyclerView();
@@ -76,14 +72,11 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
         mMeiziPresenter.getMeiziData(1);
     }
 
-    private void initFButton()
-    {
+    private void initFButton() {
         mFButton.attachToRecyclerView(mRecyclerView);
-        mFButton.setOnClickListener(new View.OnClickListener()
-        {
+        mFButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 if (isRefreshing || isLoading)
                     return;
                 mAnimator = ObjectAnimator.ofFloat(v, "rotation", 0F, 360F);
@@ -99,20 +92,16 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
         });
     }
 
-    private void initRecyclerView()
-    {
+    private void initRecyclerView() {
         mAdapter = new MeiziAdapter(getContext());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new WrapContentGridLayoutManager(getContext(), 3));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(new OnRcvScrollListener()
-        {
+        mRecyclerView.addOnScrollListener(new OnRcvScrollListener() {
             @Override
-            public void onBottom()
-            {
+            public void onBottom() {
                 super.onBottom();
-                if (!isLoading)
-                {
+                if (!isLoading) {
                     isLoading = true;
                     page++;
                     loadMoreDate();
@@ -121,33 +110,21 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
         });
     }
 
-    private void loadMoreDate()
-    {
+    private void loadMoreDate() {
         mAdapter.onLoadStart();
         mMeiziPresenter.getMeiziData(page);
     }
 
     @Override
-    public void finishCreateView(Bundle state)
-    {
+    public void finishCreateView(Bundle state) {
         isPrepared = true;
-        mMeiziPresenter = new MeiziPresenterImpl(getContext(), this);
+        mMeiziPresenter = new MeiziPresenterImpl(getContext(), this, this.bindToLifecycle());
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         lazyLoad();
     }
 
     @Override
-    protected void onInvisible()
-    {
-        super.onInvisible();
-        hideProgressBar();
-//        if (mMeiziPresenter != null)
-//            mMeiziPresenter.unsubcrible();
-    }
-
-    @Override
-    public void updateMeiziData(ArrayList<Meizi> list)
-    {
+    public void updateMeiziData(ArrayList<Meizi> list) {
         hideEmptyView();
         mAdapter.addLists(list);
         mAdapter.onLoadFinish();
@@ -155,15 +132,12 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     }
 
     @Override
-    public void showProgressBar()
-    {
+    public void showProgressBar() {
         isRefreshing = true;
         mSwipeRefreshLayout.setRefreshing(true);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-        {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh()
-            {
+            public void onRefresh() {
                 isRefreshing = true;
                 //                mAdapter.clearMeiziList();
                 mMeiziPresenter.getMeiziData(1);
@@ -172,8 +146,7 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     }
 
     @Override
-    public void hideProgressBar()
-    {
+    public void hideProgressBar() {
         if (mAnimator != null)
             mAnimator.cancel();
         if (mSwipeRefreshLayout != null)
@@ -183,37 +156,16 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView
     }
 
     @Override
-    public void showError(String error)
-    {
+    public void showError(String error) {
         initEmptyView();
     }
 
-    public void hideEmptyView()
-    {
+    public void hideEmptyView() {
         mCustomEmptyView.setVisibility(View.GONE);
     }
 
-    public void initEmptyView()
-    {
-        if (!AppUtil.isNetworkConnected())
-        {
-            SnackbarUtil.showMessage(mRecyclerView, getString(R.string.noNetwork));
-        }
-        else
-        {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mCustomEmptyView.setVisibility(View.VISIBLE);
-            mCustomEmptyView.setEmptyImage(R.drawable.img_tips_error_load_error);
-            mCustomEmptyView.setEmptyText(getString(R.string.loaderror));
-            SnackbarUtil.showMessage(mRecyclerView, getString(R.string.noNetwork));
-            mCustomEmptyView.reload(new CustomEmptyView.ReloadOnClickListener()
-            {
-                @Override
-                public void reloadClick()
-                {
-                    mMeiziPresenter.getMeiziData(1);
-                }
-            });
-        }
+    public void initEmptyView() {
+        mSwipeRefreshLayout.setRefreshing(false);
+        SnackbarUtil.showMessage(mRecyclerView, getString(R.string.noNetwork));
     }
 }

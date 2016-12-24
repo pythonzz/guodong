@@ -152,7 +152,7 @@ public class VideoFragment extends AbsBaseFragment implements IVideoView
     protected void finishCreateView(Bundle state)
     {
         isPrepared = true;
-        mVideoPresenter = new VideoPresenterImpl(this);
+        mVideoPresenter = new VideoPresenterImpl(this, this.bindToLifecycle());
         lazyLoad();
     }
 

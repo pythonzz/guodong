@@ -5,6 +5,7 @@ import com.guodong.sun.guodong.api.ApiHelper;
 import com.guodong.sun.guodong.entity.zhihu.ZhihuDailyStory;
 import com.guodong.sun.guodong.presenter.IZhihuDetailPresenter;
 import com.guodong.sun.guodong.view.IZhihuDetailView;
+import com.trello.rxlifecycle.LifecycleTransformer;
 
 import rx.Observer;
 import rx.Subscription;
@@ -19,11 +20,13 @@ public class ZhihuDetailPresenterImpl extends BasePresenterImpl implements IZhih
 {
     private IZhihuDetailView mZhihuDetailView;
     private Gson mGson;
+    private LifecycleTransformer bind;
 
-    public ZhihuDetailPresenterImpl(IZhihuDetailView zhihuDetailView)
+    public ZhihuDetailPresenterImpl(IZhihuDetailView zhihuDetailView, LifecycleTransformer bind)
     {
         mZhihuDetailView = zhihuDetailView;
         mGson = new Gson();
+        this.bind = bind;
     }
 
     @Override
@@ -33,6 +36,7 @@ public class ZhihuDetailPresenterImpl extends BasePresenterImpl implements IZhih
         Subscription subscription = ApiHelper
                 .getInstance().getZhiHuApi()
                 .getZhiHuStory(id)
+                .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ZhihuDailyStory>()

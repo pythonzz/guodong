@@ -149,7 +149,7 @@ public class ZhihuFragment extends AbsBaseFragment implements IZhihuView
     public void finishCreateView(Bundle state)
     {
         isPrepared = true;
-        mZhihuPresenter = new ZhihuPresenterImpl(this);
+        mZhihuPresenter = new ZhihuPresenterImpl(this, this.bindToLifecycle());
         lazyLoad();
     }
 

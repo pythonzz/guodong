@@ -153,7 +153,7 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
     public void finishCreateView(Bundle state)
     {
         isPrepared = true;
-        mPicturePreenter = new PicturePreenterImpl(getContext(), this);
+        mPicturePreenter = new PicturePreenterImpl(getContext(), this, this.bindToLifecycle());
         lazyLoad();
     }
 

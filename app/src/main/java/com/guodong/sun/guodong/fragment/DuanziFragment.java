@@ -131,7 +131,7 @@ public class DuanziFragment extends AbsBaseFragment implements IDuanziView
     public void finishCreateView(Bundle state)
     {
         isPrepared = true;
-        mDuanziPresenter = new DuanziPreenterImpl(getContext(), this);
+        mDuanziPresenter = new DuanziPreenterImpl(getContext(), this, this.bindToLifecycle());
         lazyLoad();
     }
 

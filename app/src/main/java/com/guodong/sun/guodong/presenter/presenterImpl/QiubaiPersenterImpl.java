@@ -9,6 +9,7 @@ import com.guodong.sun.guodong.entity.qiubai.QiuShiBaiKe;
 import com.guodong.sun.guodong.presenter.IQiubaiPresenter;
 import com.guodong.sun.guodong.uitls.CacheUtil;
 import com.guodong.sun.guodong.view.IQiubaiView;
+import com.trello.rxlifecycle.LifecycleTransformer;
 
 import java.util.ArrayList;
 
@@ -26,11 +27,13 @@ public class QiubaiPersenterImpl extends BasePresenterImpl implements IQiubaiPre
     private IQiubaiView mQiubaiView;
     private CacheUtil mCacheUtil;
     private Gson gson = new Gson();
+    private LifecycleTransformer bind;
 
-    public QiubaiPersenterImpl(Context context, IQiubaiView mQiubaiView)
+    public QiubaiPersenterImpl(Context context, IQiubaiView mQiubaiView, LifecycleTransformer bind)
     {
         this.mQiubaiView = mQiubaiView;
         mCacheUtil = CacheUtil.get(context);
+        this.bind = bind;
     }
 
     @Override
@@ -38,6 +41,7 @@ public class QiubaiPersenterImpl extends BasePresenterImpl implements IQiubaiPre
     {
         mQiubaiView.showProgressBar();
         Subscription subscription = ApiHelper.getInstance().getQiuBaiApi().getQiuBaiData(page)
+                .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<QiuShiBaiKe>()

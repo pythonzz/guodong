@@ -93,7 +93,7 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
 //        mAlertDialog = new AlertDialog.Builder(this).create();
 //        mAlertDialog.setView(getLayoutInflater().inflate(R.layout.loading_layout, null));
 
-        mZhihuDetailPresenter = new ZhihuDetailPresenterImpl(this);
+        mZhihuDetailPresenter = new ZhihuDetailPresenterImpl(this, this.bindToLifecycle());
         mId = getIntent().getIntExtra(EXTRA_ID, 0);
         mZhihuDetailPresenter.getZhihuDetailData(mId);
 

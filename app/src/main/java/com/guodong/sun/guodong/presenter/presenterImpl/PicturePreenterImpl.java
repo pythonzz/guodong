@@ -12,6 +12,7 @@ import com.guodong.sun.guodong.presenter.IPicturePresenter;
 import com.guodong.sun.guodong.uitls.CacheUtil;
 import com.guodong.sun.guodong.view.IDuanziView;
 import com.guodong.sun.guodong.view.IPictureView;
+import com.trello.rxlifecycle.LifecycleTransformer;
 
 import java.util.ArrayList;
 
@@ -30,11 +31,13 @@ public class PicturePreenterImpl extends BasePresenterImpl implements IPicturePr
     private IPictureView mPictureView;
     private CacheUtil mCacheUtil;
     private Gson gson = new Gson();
+    private LifecycleTransformer bind;
 
-    public PicturePreenterImpl(Context context, IPictureView mDuanziView)
+    public PicturePreenterImpl(Context context, IPictureView mDuanziView, LifecycleTransformer bind)
     {
         this.mPictureView = mDuanziView;
         mCacheUtil = CacheUtil.get(context);
+        this.bind = bind;
     }
 
     @Override
@@ -45,6 +48,7 @@ public class PicturePreenterImpl extends BasePresenterImpl implements IPicturePr
                 .getInstance()
                 .getDuanZiApi()
                 .getPicture()
+                .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Picture>()

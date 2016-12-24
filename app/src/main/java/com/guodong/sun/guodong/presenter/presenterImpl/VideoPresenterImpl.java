@@ -6,6 +6,7 @@ import com.guodong.sun.guodong.entity.duanzi.NeiHanVideo;
 import com.guodong.sun.guodong.entity.duanzi.VideoData;
 import com.guodong.sun.guodong.presenter.IVideoPresenter;
 import com.guodong.sun.guodong.view.IVideoView;
+import com.trello.rxlifecycle.LifecycleTransformer;
 
 
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ public class VideoPresenterImpl extends BasePresenterImpl implements IVideoPrese
 {
     private IVideoView mVideoView;
     private Gson mGson;
+    private LifecycleTransformer bind;
 
-    public VideoPresenterImpl(IVideoView videoView)
+    public VideoPresenterImpl(IVideoView videoView, LifecycleTransformer bind)
     {
         mVideoView = videoView;
         mGson = new Gson();
+        this.bind = bind;
     }
 
     @Override
@@ -36,6 +39,7 @@ public class VideoPresenterImpl extends BasePresenterImpl implements IVideoPrese
         mVideoView.showProgressBar();
         Subscription subscription = ApiHelper.getInstance()
                 .getDuanZiApi().getVideoData(page)
+                .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<VideoData>()

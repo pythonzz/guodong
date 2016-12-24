@@ -132,7 +132,7 @@ public class QiubaiFragment extends AbsBaseFragment implements IQiubaiView
     public void finishCreateView(Bundle state)
     {
         isPrepared = true;
-        mQiubaiPresenter = new QiubaiPersenterImpl(getContext(), this);
+        mQiubaiPresenter = new QiubaiPersenterImpl(getContext(), this, this.bindToLifecycle());
         lazyLoad();
     }
 
