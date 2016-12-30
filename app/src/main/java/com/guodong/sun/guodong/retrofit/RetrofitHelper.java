@@ -50,7 +50,8 @@ public class RetrofitHelper
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
-                .addNetworkInterceptor(createCacheInterceptor())
+                .addNetworkInterceptor(createCacheInterceptor())    // 无网缓存
+                .addInterceptor(createCacheInterceptor())           // 无网缓存 两个都需要拦截
                 .cache(getCache())
                 .retryOnConnectionFailure(true)
                 .connectTimeout(CONNECTTIMEOUT, TimeUnit.SECONDS)
@@ -86,15 +87,15 @@ public class RetrofitHelper
                 Response response = chain.proceed(request);
                 if (AppUtil.isNetworkConnected())
                 {
-                    int maxAge = 300;
+                    int maxAge = 60 * 60 * 24 * 7;
                     response.newBuilder()
-                            .header("Cache-Control", "public, max-age=" + maxAge)
+                            .header("Cache-Control", "Cache-Control: public, max-age=" + maxAge)
                             .removeHeader("Pragma")
                             .build();
                 }
                 else
                 {
-                    int maxStale = 60 * 60 * 24 * 28;
+                    int maxStale = 60 * 60 * 24 * 7;
                     response.newBuilder()
                             .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
                             .removeHeader("Pragma")
