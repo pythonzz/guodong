@@ -94,6 +94,7 @@ public class MeiziFragment extends AbsBaseFragment implements IMeiziView {
 
     private void initRecyclerView() {
         mAdapter = new MeiziAdapter(getContext());
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new WrapContentGridLayoutManager(getContext(), 3));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -61,7 +61,7 @@ public class RetrofitHelper
 
     private Cache getCache()
     {
-        // 获取缓存目标,SD卡
+        // 获取缓存目标
         File cacheFile = new File(MyApplication.getInstance().getCacheDir(), AppUtil.getAppName());
         // 创建缓存对象,最大缓存50m
         return new Cache(cacheFile, 1024 * 1024 * 50);

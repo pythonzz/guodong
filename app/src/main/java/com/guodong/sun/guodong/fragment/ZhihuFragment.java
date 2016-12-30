@@ -118,6 +118,7 @@ public class ZhihuFragment extends AbsBaseFragment implements IZhihuView
     private void initRecyclerView()
     {
         mAdapter = new ZhihuAdapter(getContext());
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
