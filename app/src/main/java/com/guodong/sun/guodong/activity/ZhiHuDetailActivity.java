@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.base.AbsBaseActivity;
 import com.guodong.sun.guodong.entity.zhihu.ZhihuDailyStory;
@@ -49,9 +50,6 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
 
     @BindView(R.id.zhihu_detail_iv)
     ImageView mImageView;
-
-    @BindView(R.id.zhihu_detail_tv)
-    TextView mTextView;
 
     @BindView(R.id.zhihu_detail_toolbar)
     Toolbar mToolbar;
@@ -166,6 +164,12 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
     }
 
     @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        finishAfterTransition();
+    }
+
+    @Override
     protected void onDestroy()
     {
         super.onDestroy();
@@ -190,7 +194,12 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
             mStory = story;
             mWebView.loadDataWithBaseURL("x-data://base", WebUtils.convertResult(story.getBody()), "text/html", "utf-8", null);
             mWebView.getSettings().setBlockNetworkImage(false);
-            Glide.with(this).load(story.getImage()).crossFade().centerCrop().into(mImageView);
+            Glide.with(this).load(story.getImage())
+                    .crossFade().centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.color.mid_grey)
+                    .error(R.color.mid_grey)
+                    .into(mImageView);
             mToolbarLayout.setTitle(story.getTitle());
         }
         else

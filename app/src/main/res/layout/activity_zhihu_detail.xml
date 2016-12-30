@@ -31,14 +31,6 @@
                 app:layout_collapseParallaxMultiplier="0.7"
                 android:id="@+id/zhihu_detail_iv"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/zhihu_detail_tv"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true" />
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/zhihu_detail_toolbar"
                 android:layout_height="?attr/actionBarSize"
@@ -51,7 +43,8 @@
     <android.support.v4.widget.NestedScrollView
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="15dp">
 
         <WebView
             android:layout_width="match_parent"
