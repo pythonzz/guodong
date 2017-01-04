@@ -63,16 +63,6 @@ public class MultiGifActivity extends RxAppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  // 布局占据系统栏
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE // 布局不会因系统栏改变而改变
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // 隐藏导航栏
-            decorView.setSystemUiVisibility(option);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
-
         if (savedInstanceState != null) {
             currentPos = savedInstanceState.getInt(MULTI_IMAGE_CURRENT_POS);
             width = savedInstanceState.getInt(MULTI_IMAGE_WIDTH);
@@ -117,6 +107,25 @@ public class MultiGifActivity extends RxAppCompatActivity {
 
         mViewPager.setCurrentItem(currentPos);
         mTextView.setText(getString(R.string.picture_conut, currentPos + 1, mListUrl.size()));
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            View decorView = getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  // 布局占据系统栏
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE // 布局不会因系统栏改变而改变
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // 布局占据导航栏
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏导航栏
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN // 全屏，隐藏系统栏
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY; // 系统栏粘性
+            decorView.setSystemUiVisibility(option);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(Color.TRANSPARENT);
+                getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            }
+        }
     }
 
     @Override

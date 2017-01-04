@@ -15,7 +15,7 @@
 
         <include layout="@layout/fragment_picture_top"/>
 
-        <ImageView
+        <com.guodong.sun.guodong.widget.ResizableImageView
             android:id="@+id/fragment_picture_item_iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

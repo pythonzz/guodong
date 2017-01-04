@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@android:color/white">
 
     <FrameLayout
         android:id="@+id/surface_container"
@@ -27,20 +27,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="#222222" />
-
-    <ImageView
-        android:id="@+id/thumb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:background="#000000"
-        android:scaleType="fitCenter" />
+        android:background="@android:color/white" />
 
     <LinearLayout
         android:id="@+id/layout_bottom"
@@ -164,4 +151,11 @@
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:background="@drawable/oval_shape"/>
+
+    <ImageView
+        android:id="@+id/thumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
 </RelativeLayout>

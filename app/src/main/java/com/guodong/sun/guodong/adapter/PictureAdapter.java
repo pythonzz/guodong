@@ -30,6 +30,7 @@ import com.guodong.sun.guodong.uitls.AlxGifHelper;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.guodong.sun.guodong.widget.NineGridImageView;
 import com.guodong.sun.guodong.widget.NineGridImageViewAdapter;
+import com.guodong.sun.guodong.widget.ResizableImageView;
 import com.guodong.sun.guodong.widget.SpacingTextView;
 import com.guodong.sun.guodong.widget.SunVideoPlayer;
 
@@ -202,9 +203,9 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         // ----------------------------------------------------------
 
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.mImageView.getLayoutParams();
-        lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
-        holder.mImageView.setLayoutParams(lp);
+//        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.mImageView.getLayoutParams();
+//        lp.height = MyApplication.ScreenWidth * bean.getMiddle_image().getR_height() / bean.getMiddle_image().getR_width();
+//        holder.mImageView.setLayoutParams(lp);
 
         final String url = bean.getMiddle_image().getUrl_list().get(0).getUrl();
 
@@ -464,7 +465,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     class ItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_item_iv)
-        ImageView mImageView;
+        ResizableImageView mImageView;
 
         ItemViewHolder(View itemView) {
             super(itemView);

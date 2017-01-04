@@ -34,8 +34,7 @@ import java.util.Date;
  * Created by Administrator on 2016/10/11.
  */
 
-public class MeiziActivity extends RxAppCompatActivity
-{
+public class MeiziActivity extends RxAppCompatActivity {
     private static final String TAG = "MeiziActivity";
 
     public static final String EXTRA_IMAGE_URL = "image";
@@ -52,8 +51,7 @@ public class MeiziActivity extends RxAppCompatActivity
     private int mWidth;
     private int mHeight;
 
-    public static Intent newIntent(Context context, String url, int locationX, int locationY, int width, int height)
-    {
+    public static Intent newIntent(Context context, String url, int locationX, int locationY, int width, int height) {
         Intent intent = new Intent(context, MeiziActivity.class);
         intent.putExtra(EXTRA_IMAGE_URL, url);
         intent.putExtra(TRANSIT_LOCATIONX, locationX);
@@ -64,18 +62,9 @@ public class MeiziActivity extends RxAppCompatActivity
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  // 布局占据系统栏
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE // 布局不会因系统栏改变而改变
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // 隐藏导航栏
-            decorView.setSystemUiVisibility(option);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
+
         mImageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
         mLocationX = getIntent().getIntExtra(TRANSIT_LOCATIONX, 0);
         mLocationY = getIntent().getIntExtra(TRANSIT_LOCATIONY, 0);
@@ -93,75 +82,78 @@ public class MeiziActivity extends RxAppCompatActivity
                 .asBitmap()
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(new SimpleTarget<Bitmap>()
-                {
+                .into(new SimpleTarget<Bitmap>() {
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
-                    {
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         mBitmap = resource;
                         mPicture.setImageBitmap(resource);
                     }
                 });
-        new Once(this).show("提示", new Once.OnceCallback()
-        {
+        new Once(this).show("提示", new Once.OnceCallback() {
             @Override
-            public void onOnce()
-            {
+            public void onOnce() {
                 SnackbarUtil.showMessage(mPicture, "单击图片返回, 双击图片放大, 长按图片保存");
             }
         });
     }
 
-    private void setupPhotoAttacher()
-    {
-        mPicture.setOnClickListener(new ZoomImageView.OnClickListener()
-        {
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            View decorView = getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  // 布局占据系统栏
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE // 布局不会因系统栏改变而改变
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // 布局占据导航栏
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏导航栏
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN // 全屏，隐藏系统栏
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY; // 系统栏粘性
+            decorView.setSystemUiVisibility(option);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(Color.TRANSPARENT);
+                getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            }
+        }
+    }
+
+    private void setupPhotoAttacher() {
+        mPicture.setOnClickListener(new ZoomImageView.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 onBackPressed();
 //                Toast.makeText(PictureActivity.this, "单击", Toast.LENGTH_SHORT).show();
             }
         });
 
-        mPicture.setOnLongClickListener(new ZoomImageView.OnLongClickListener()
-        {
+        mPicture.setOnLongClickListener(new ZoomImageView.OnLongClickListener() {
             @Override
-            public void onLongClick(View v)
-            {
+            public void onLongClick(View v) {
                 createDialog();
             }
         });
     }
 
-    private void createDialog()
-    {
-        new AlertDialog.Builder(MeiziActivity.this).setMessage("保存到手机?").setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
-        {
+    private void createDialog() {
+        new AlertDialog.Builder(MeiziActivity.this).setMessage("保存到手机?").setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i)
-            {
+            public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
-        }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-        {
+        }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i)
-            {
+            public void onClick(DialogInterface dialogInterface, int i) {
                 saveImage();
                 dialogInterface.dismiss();
             }
         }).show();
     }
 
-    private void saveImage()
-    {
+    private void saveImage() {
         File externalStorageDirectory = Environment.getExternalStorageDirectory();
         File directory = new File(externalStorageDirectory, getString(R.string.app_name));
         if (!directory.exists())
             directory.mkdir();
-        try
-        {
+        try {
             File file = new File(directory, new Date().getTime() + ".jpg");
             FileOutputStream fos = new FileOutputStream(file);
             mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -173,15 +165,12 @@ public class MeiziActivity extends RxAppCompatActivity
             intent.setData(uri);
             sendBroadcast(intent);
             SnackbarUtil.showMessage(mPicture, "已保存到" + file.getAbsolutePath());
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "saveImage: " + e.getMessage());
-            SnackbarUtil.showMessage(mPicture, "啊偶, 出错了", "再试试", new View.OnClickListener()
-            {
+            SnackbarUtil.showMessage(mPicture, "啊偶, 出错了", "再试试", new View.OnClickListener() {
                 @Override
-                public void onClick(View view)
-                {
+                public void onClick(View view) {
                     saveImage();
                 }
             });
@@ -189,15 +178,11 @@ public class MeiziActivity extends RxAppCompatActivity
     }
 
     @Override
-    public void onBackPressed()
-    {
-        mPicture.setOnTransformListener(new ZoomImageView.TransformListener()
-        {
+    public void onBackPressed() {
+        mPicture.setOnTransformListener(new ZoomImageView.TransformListener() {
             @Override
-            public void onTransformComplete(int mode)
-            {
-                if (mode == 2)
-                {
+            public void onTransformComplete(int mode) {
+                if (mode == 2) {
                     finish();
                     overridePendingTransition(0, 0);
                 }
