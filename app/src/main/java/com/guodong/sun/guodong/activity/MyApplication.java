@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import com.antfortune.freeline.FreelineCore;
 import com.guodong.sun.guodong.CrashHandler;
 
 /**
@@ -19,6 +20,7 @@ public class MyApplication extends Application
     public void onCreate()
     {
         super.onCreate();
+        FreelineCore.init(this);
         sInstance = this;
         CrashHandler crashHandler = CrashHandler.sInstance;
         crashHandler.init(this);
