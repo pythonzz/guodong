@@ -197,5 +197,14 @@ public class MeiziActivity extends RxAppCompatActivity {
         super.onDestroy();
         RefWatcher watcher = MyApplication.getRefWatcher(this);
         watcher.watch(this);
+        Log.e(TAG, "onDestroy: 妹子退出了");
+
+        if (mPicture != null) {
+            mPicture = null;
+        }
+
+        if (mBitmap != null) {
+            mBitmap = null;
+        }
     }
 }

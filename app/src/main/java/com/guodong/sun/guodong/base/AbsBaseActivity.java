@@ -2,6 +2,7 @@ package com.guodong.sun.guodong.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.guodong.sun.guodong.activity.MyApplication;
 import com.squareup.leakcanary.RefWatcher;
@@ -16,6 +17,8 @@ import butterknife.Unbinder;
 
 public abstract class AbsBaseActivity extends RxAppCompatActivity
 {
+    private static final String TAG = "AbsBaseActivity";
+
     private Unbinder mUnbinder;
 
     @Override
@@ -40,5 +43,6 @@ public abstract class AbsBaseActivity extends RxAppCompatActivity
             mUnbinder.unbind();
             mUnbinder = null;
         }
+        Log.e(TAG, "程序退出");
     }
 }

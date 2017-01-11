@@ -129,7 +129,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<ZhihuAdapter.ZhihuViewHol
         return isLoading ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    class ZhihuViewHolder extends RecyclerView.ViewHolder
+    static class ZhihuViewHolder extends RecyclerView.ViewHolder
     {
         @BindView(R.id.zhihu_item_iv)
         ImageView mImageView;

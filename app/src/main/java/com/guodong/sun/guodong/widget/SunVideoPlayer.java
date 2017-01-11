@@ -646,6 +646,19 @@ public class SunVideoPlayer extends JCVideoPlayer {
 
     }
 
+    @Override
+    public void onCompletion() {
+        super.onCompletion();
+        if (DISMISS_CONTROL_VIEW_TIMER != null) {
+            DISMISS_CONTROL_VIEW_TIMER.cancel();
+            DISMISS_CONTROL_VIEW_TIMER = null;
+        }
+        if (mDismissControlViewTimerTask != null) {
+            mDismissControlViewTimerTask.cancel();
+            mDismissControlViewTimerTask = null;
+        }
+    }
+
     public class DismissControlViewTimerTask extends TimerTask {
 
         @Override

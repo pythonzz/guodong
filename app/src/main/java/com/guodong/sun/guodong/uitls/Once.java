@@ -10,8 +10,8 @@ public class Once {
 
 
     public Once(Context context) {
-        mSharedPreferences = context.getSharedPreferences("once", Context.MODE_PRIVATE);
-        mContext = context;
+        mContext = context.getApplicationContext();
+        mSharedPreferences = mContext.getSharedPreferences("once", Context.MODE_PRIVATE);
     }
 
 

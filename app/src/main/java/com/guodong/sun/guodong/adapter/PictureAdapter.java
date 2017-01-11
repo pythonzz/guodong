@@ -369,6 +369,35 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param bean bean
      */
     private void displayMultiImage(MultiItemViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
+
+        NineGridImageViewAdapter<ThumbImageList> mAdapter = new NineGridImageViewAdapter<ThumbImageList>() {
+            @Override
+            protected void onDisplayImage(Context context, ImageView imageView, ThumbImageList s) {
+                displayImageView(imageView, s.getUrl());
+            }
+
+            @Override
+            protected ImageView generateImageView(Context context) {
+                return super.generateImageView(context);
+            }
+
+            @Override
+            protected void onItemImageClick(Context context, int index, List<ThumbImageList> list) {
+                ArrayList<String> listUrl = new ArrayList<>();
+                for (ThumbImageList thumbImageList : list) {
+                    listUrl.add(thumbImageList.getUrl());
+                }
+
+                if (list.get(index).is_gif()) {
+                    MultiGifActivity.startActivity(context, index, listUrl,
+                            list.get(index).getWidth(), list.get(index).getHeight());
+                    return;
+                }
+
+                MultiPictureActivity.startActivity(context, index,  listUrl);
+            }
+        };
+        holder.mNineGridImageView.setAdapter(mAdapter);
         holder.mNineGridImageView.setImagesData(bean.getThumb_image_list(), bean.getLarge_image_list());
     }
 
@@ -431,7 +460,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return isLoading ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    class PictureViewHolder extends RecyclerView.ViewHolder {
+    static class PictureViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.picture_item_user_avatar)
         ImageView user_avatar;
 
@@ -462,7 +491,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    class ItemViewHolder extends PictureViewHolder {
+    static class ItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_item_iv)
         ResizableImageView mImageView;
@@ -473,7 +502,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    class GifItemViewHolder extends PictureViewHolder {
+    static class GifItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_gifview)
         GifImageView mGifImageView;
@@ -490,7 +519,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    class GifMp4ItemViewHolder extends PictureViewHolder {
+    static class GifMp4ItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_gifmp4)
         SunVideoPlayer mGifVideo;
@@ -504,7 +533,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    class LongItemViewHolder extends PictureViewHolder {
+    static class LongItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.fragment_picture_item_iv)
         ImageView mImageView;
@@ -518,43 +547,14 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    class MultiItemViewHolder extends PictureViewHolder {
+    static class MultiItemViewHolder extends PictureViewHolder {
 
         @BindView(R.id.picture_multi_nine)
         NineGridImageView mNineGridImageView;
 
-        private NineGridImageViewAdapter<ThumbImageList> mAdapter = new NineGridImageViewAdapter<ThumbImageList>() {
-            @Override
-            protected void onDisplayImage(Context context, ImageView imageView, ThumbImageList s) {
-                displayImageView(imageView, s.getUrl());
-            }
-
-            @Override
-            protected ImageView generateImageView(Context context) {
-                return super.generateImageView(context);
-            }
-
-            @Override
-            protected void onItemImageClick(Context context, int index, List<ThumbImageList> list) {
-                ArrayList<String> listUrl = new ArrayList<>();
-                for (ThumbImageList thumbImageList : list) {
-                    listUrl.add(thumbImageList.getUrl());
-                }
-
-                if (list.get(index).is_gif()) {
-                    MultiGifActivity.startActivity(context, index, listUrl,
-                            list.get(index).getWidth(), list.get(index).getHeight());
-                    return;
-                }
-
-                MultiPictureActivity.startActivity(context, index,  listUrl);
-            }
-        };
-
         MultiItemViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(this, itemView);
-            mNineGridImageView.setAdapter(mAdapter);
         }
     }
 

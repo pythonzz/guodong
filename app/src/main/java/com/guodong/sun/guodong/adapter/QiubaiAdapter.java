@@ -165,7 +165,7 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
         return isLoading ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    class DuanziViewHolder extends RecyclerView.ViewHolder
+    static class DuanziViewHolder extends RecyclerView.ViewHolder
     {
         @BindView(R.id.duanzi_author)
         TextView tvAuthor;

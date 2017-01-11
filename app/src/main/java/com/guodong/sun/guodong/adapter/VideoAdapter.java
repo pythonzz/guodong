@@ -123,7 +123,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         return isLoading ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    class VideoViewHolder extends RecyclerView.ViewHolder
+    static class VideoViewHolder extends RecyclerView.ViewHolder
     {
 
         @BindView(R.id.video_player)

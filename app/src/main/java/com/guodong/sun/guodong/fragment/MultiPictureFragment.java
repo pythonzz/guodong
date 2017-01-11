@@ -183,5 +183,14 @@ public class MultiPictureFragment extends RxFragment {
         super.onDestroy();
         RefWatcher watcher = MyApplication.getRefWatcher(getActivity());
         watcher.watch(this);
+
+        if (mImageView != null) {
+            mImageView = null;
+        }
+
+        if (mBitmap != null) {
+            mBitmap.recycle();
+            mBitmap = null;
+        }
     }
 }

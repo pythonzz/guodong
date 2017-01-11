@@ -135,7 +135,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziViewHol
         return isLoading ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    class MeiziViewHolder extends RecyclerView.ViewHolder
+    static class MeiziViewHolder extends RecyclerView.ViewHolder
     {
         @BindView(R.id.meizi_iv)
         SquareCenterImageView imageView;

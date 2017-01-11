@@ -29,7 +29,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter
     public HomePagerAdapter(FragmentManager fm, Context context)
     {
         super(fm);
-        TITLES = context.getResources().getStringArray(R.array.titles);
+        TITLES = context.getApplicationContext().getResources().getStringArray(R.array.titles);
         fragments = new Fragment[TITLES.length];
     }
 

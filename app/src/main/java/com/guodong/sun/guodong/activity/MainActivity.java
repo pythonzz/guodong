@@ -1,6 +1,5 @@
 package com.guodong.sun.guodong.activity;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,10 +19,7 @@ import com.flyco.tablayout.SlidingTabLayout;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.adapter.HomePagerAdapter;
 import com.guodong.sun.guodong.base.AbsBaseActivity;
-import com.guodong.sun.guodong.fragment.PictureFragment;
 import com.guodong.sun.guodong.glide.GlideCacheUtil;
-
-import java.math.BigDecimal;
 
 import butterknife.BindView;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
@@ -180,6 +176,14 @@ public class MainActivity extends AbsBaseActivity {
                     GlideCacheUtil.getInstance().clearImageAllCache(MainActivity.this);
                 super.onBackPressed();
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mHomeAdapter != null) {
+            mHomeAdapter = null;
         }
     }
 }
