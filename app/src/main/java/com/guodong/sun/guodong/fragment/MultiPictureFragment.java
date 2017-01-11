@@ -24,11 +24,13 @@ import com.bumptech.glide.request.target.Target;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.activity.MeiziActivity;
 import com.guodong.sun.guodong.activity.MultiPictureActivity;
+import com.guodong.sun.guodong.activity.MyApplication;
 import com.guodong.sun.guodong.glide.ProgressTarget;
 import com.guodong.sun.guodong.uitls.Once;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.shizhefei.view.largeimage.LargeImageView;
 import com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory;
+import com.squareup.leakcanary.RefWatcher;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
 import java.io.File;
@@ -174,5 +176,12 @@ public class MultiPictureFragment extends RxFragment {
                 }
             });
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher watcher = MyApplication.getRefWatcher(getActivity());
+        watcher.watch(this);
     }
 }

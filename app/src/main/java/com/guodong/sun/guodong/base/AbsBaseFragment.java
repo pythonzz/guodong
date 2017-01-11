@@ -7,9 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.guodong.sun.guodong.activity.MyApplication;
+import com.squareup.leakcanary.RefWatcher;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by Administrator on 2016/10/9.
@@ -23,6 +26,8 @@ public abstract class AbsBaseFragment extends RxFragment
 
     private LayoutInflater inflater;
 
+    private Unbinder mUnbinder;
+
     // 标志位 标志已经初始化完成。
     protected boolean isPrepared;
 
@@ -35,7 +40,7 @@ public abstract class AbsBaseFragment extends RxFragment
         this.inflater = inflater;
         parentView = inflater.inflate(getLayoutResId(), container, false);
         activity = getSupportActivity();
-        ButterKnife.bind(this, parentView);
+        mUnbinder = ButterKnife.bind(this, parentView);
         return parentView;
     }
 
@@ -58,6 +63,17 @@ public abstract class AbsBaseFragment extends RxFragment
     {
         super.onDetach();
         this.activity = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher watcher = MyApplication.getRefWatcher(getActivity());
+        watcher.watch(this);
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+            mUnbinder = null;
+        }
     }
 
     public FragmentActivity getSupportActivity()

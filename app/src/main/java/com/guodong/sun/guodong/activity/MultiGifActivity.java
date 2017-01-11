@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.base.AbsBaseActivity;
 import com.guodong.sun.guodong.fragment.MultiGifFragment;
 import com.guodong.sun.guodong.fragment.MultiPictureFragment;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
@@ -28,7 +29,7 @@ import butterknife.ButterKnife;
  * Created by Administrator on 2016/12/16.
  */
 
-public class MultiGifActivity extends RxAppCompatActivity {
+public class MultiGifActivity extends AbsBaseActivity {
 
     private static final String MULTI_IMAGE_URL = "MULTI_IMAGE_URL";
     private static final String MULTI_IMAGE_POS = "MULTI_IMAGE_POS";
@@ -58,11 +59,8 @@ public class MultiGifActivity extends RxAppCompatActivity {
     @BindView(R.id.picture_multi_pager_bottom)
     TextView mTextView;
 
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    protected void initViews(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentPos = savedInstanceState.getInt(MULTI_IMAGE_CURRENT_POS);
             width = savedInstanceState.getInt(MULTI_IMAGE_WIDTH);
@@ -74,9 +72,6 @@ public class MultiGifActivity extends RxAppCompatActivity {
         }
 
         mListUrl = getIntent().getStringArrayListExtra(MULTI_IMAGE_URL);
-
-        setContentView(R.layout.activity_multi_picture);
-        ButterKnife.bind(this);
 
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -107,6 +102,11 @@ public class MultiGifActivity extends RxAppCompatActivity {
 
         mViewPager.setCurrentItem(currentPos);
         mTextView.setText(getString(R.string.picture_conut, currentPos + 1, mListUrl.size()));
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_multi_picture;
     }
 
     @Override

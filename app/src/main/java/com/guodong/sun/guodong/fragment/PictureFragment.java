@@ -1,9 +1,7 @@
 package com.guodong.sun.guodong.fragment;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,8 +9,6 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 
 import com.guodong.sun.guodong.R;
-import com.guodong.sun.guodong.activity.MainActivity;
-import com.guodong.sun.guodong.adapter.DuanziAdapter;
 import com.guodong.sun.guodong.adapter.PictureAdapter;
 import com.guodong.sun.guodong.base.AbsBaseFragment;
 import com.guodong.sun.guodong.entity.picture.Picture;

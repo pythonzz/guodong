@@ -23,6 +23,7 @@ import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.uitls.Once;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.widget.ZoomImageView;
+import com.squareup.leakcanary.RefWatcher;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import java.io.File;
@@ -191,4 +192,10 @@ public class MeiziActivity extends RxAppCompatActivity {
         mPicture.transformOut();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RefWatcher watcher = MyApplication.getRefWatcher(this);
+        watcher.watch(this);
+    }
 }

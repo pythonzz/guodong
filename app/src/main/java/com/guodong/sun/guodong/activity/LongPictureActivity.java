@@ -25,6 +25,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.base.AbsBaseActivity;
 import com.guodong.sun.guodong.glide.ProgressTarget;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.StringUtils;
@@ -45,7 +46,7 @@ import butterknife.ButterKnife;
  * Created by Administrator on 2016/12/16.
  */
 
-public class LongPictureActivity extends RxAppCompatActivity {
+public class LongPictureActivity extends AbsBaseActivity {
 
     private static final String LONG_IMAGE_URL = "LONG_IMAGE_URL";
     private static final String TAG = LongPictureActivity.class.getSimpleName();
@@ -64,23 +65,8 @@ public class LongPictureActivity extends RxAppCompatActivity {
     LargeImageView mImageView;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  // 布局占据系统栏
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE // 布局不会因系统栏改变而改变
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // 隐藏导航栏
-            decorView.setSystemUiVisibility(option);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
-
+    protected void initViews(Bundle savedInstanceState) {
         long_image_url = getIntent().getStringExtra(LONG_IMAGE_URL);
-
-        setContentView(R.layout.activity_picture);
-        ButterKnife.bind(this);
 
         mImageView.setEnabled(true);
         mImageView.setCriticalScaleValueHook(new LargeImageView.CriticalScaleValueHook() {
@@ -130,6 +116,30 @@ public class LongPictureActivity extends RxAppCompatActivity {
                         cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
                     }
                 });
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_picture;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            View decorView = getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  // 布局占据系统栏
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE // 布局不会因系统栏改变而改变
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // 布局占据导航栏
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏导航栏
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN // 全屏，隐藏系统栏
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY; // 系统栏粘性
+            decorView.setSystemUiVisibility(option);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(Color.TRANSPARENT);
+                getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            }
+        }
     }
 
     private void createDialog()

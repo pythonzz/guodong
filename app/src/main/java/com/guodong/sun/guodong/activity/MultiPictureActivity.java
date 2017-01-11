@@ -19,6 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.base.AbsBaseActivity;
 import com.guodong.sun.guodong.fragment.MultiPictureFragment;
 import com.guodong.sun.guodong.uitls.Once;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
@@ -40,7 +41,7 @@ import butterknife.ButterKnife;
  * Created by Administrator on 2016/12/16.
  */
 
-public class MultiPictureActivity extends RxAppCompatActivity {
+public class MultiPictureActivity extends AbsBaseActivity {
 
     private static final String MULTI_IMAGE_URL = "MULTI_IMAGE_URL";
     private static final String MULTI_IMAGE_POS = "MULTI_IMAGE_POS";
@@ -63,11 +64,8 @@ public class MultiPictureActivity extends RxAppCompatActivity {
     @BindView(R.id.picture_multi_pager_bottom)
     TextView mTextView;
 
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    protected void initViews(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentPos = savedInstanceState.getInt(MULTI_IMAGE_CURRENT_POS);
         } else {
@@ -75,9 +73,6 @@ public class MultiPictureActivity extends RxAppCompatActivity {
         }
 
         mListUrl = getIntent().getStringArrayListExtra(MULTI_IMAGE_URL);
-
-        setContentView(R.layout.activity_multi_picture);
-        ButterKnife.bind(this);
 
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -116,6 +111,11 @@ public class MultiPictureActivity extends RxAppCompatActivity {
                 SnackbarUtil.showMessage(mViewPager, "单击图片返回, 双击放大, 长按图片保存");
             }
         });
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_multi_picture;
     }
 
     @Override

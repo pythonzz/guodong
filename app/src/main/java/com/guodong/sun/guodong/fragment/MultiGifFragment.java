@@ -34,6 +34,7 @@ import com.guodong.sun.guodong.uitls.Once;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.shizhefei.view.largeimage.LargeImageView;
 import com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory;
+import com.squareup.leakcanary.RefWatcher;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
 import java.io.File;
@@ -133,5 +134,12 @@ public class MultiGifFragment extends RxFragment {
                 dialogInterface.dismiss();
             }
         }).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher watcher = MyApplication.getRefWatcher(getActivity());
+        watcher.watch(this);
     }
 }
