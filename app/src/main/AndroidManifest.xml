@@ -23,9 +23,9 @@
         android:name="com.guodong.sun.guodong.glide.GlideCache"
         android:value="GlideModule"/>
     <!-- 友盟社会化分享 -->
-    <!--<meta-data
+    <meta-data
         android:name="UMENG_APPKEY"
-        android:value="582076f69f06fd4a220009f0"/>-->
+        android:value="582076f69f06fd4a220009f0"/>
 
     <application
         android:name=".activity.MyApplication"
@@ -95,7 +95,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="tencent100424468"/>
+                <data android:scheme="tencent1105733003"/>
             </intent-filter>
         </activity>
 

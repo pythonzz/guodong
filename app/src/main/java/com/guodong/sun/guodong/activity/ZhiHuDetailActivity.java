@@ -1,8 +1,8 @@
 package com.guodong.sun.guodong.activity;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -29,6 +29,17 @@ import com.guodong.sun.guodong.presenter.presenterImpl.ZhihuDetailPresenterImpl;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.WebUtils;
 import com.guodong.sun.guodong.view.IZhihuDetailView;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.ShareContent;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.shareboard.ShareBoardConfig;
+import com.umeng.socialize.shareboard.SnsPlatform;
+import com.umeng.socialize.utils.Log;
+import com.umeng.socialize.utils.ShareBoardlistener;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 
@@ -36,8 +47,7 @@ import butterknife.BindView;
  * Created by Administrator on 2016/10/13.
  */
 
-public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetailView
-{
+public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetailView {
     public static final String EXTRA_ID = "id";
     public static final String TRANSIT_PIC = "picture";
     private int mId;
@@ -60,20 +70,19 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
     private AlertDialog mAlertDialog;
     private ZhihuDetailPresenterImpl mZhihuDetailPresenter;
     private ZhihuDailyStory mStory;
+    private ShareAction mShareAction;
+    private UMShareListener mShareListener;
 
-    public static Intent newIntent(Context context, int id)
-    {
+    public static Intent newIntent(Context context, int id) {
         Intent intent = new Intent(context, ZhiHuDetailActivity.class);
         intent.putExtra(EXTRA_ID, id);
         return intent;
     }
 
     @Override
-    protected void initViews(Bundle savedInstanceState)
-    {
+    protected void initViews(Bundle savedInstanceState) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             View decorView = getWindow().getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             decorView.setSystemUiVisibility(option);
@@ -87,6 +96,7 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
         ViewCompat.setTransitionName(mImageView, TRANSIT_PIC);
 
         initWebView();
+        initShare();
 
 //        mAlertDialog = new AlertDialog.Builder(this).create();
 //        mAlertDialog.setView(getLayoutInflater().inflate(R.layout.loading_layout, null));
@@ -95,27 +105,101 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
         mId = getIntent().getIntExtra(EXTRA_ID, 0);
         mZhihuDetailPresenter.getZhihuDetailData(mId);
 
-        mFButton.setOnClickListener(new View.OnClickListener()
-        {
+        mFButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                try
-                {
-                    Intent shareIntent = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
-                    String shareText = mStory.getTitle() + " " + mStory.getShare_url() + "\t\t\t分享自 " + getString(R.string.app_name);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-                    startActivity(Intent.createChooser(shareIntent, "分享至"));
-                } catch (ActivityNotFoundException ex)
-                {
-                    SnackbarUtil.showMessage(v, "分享失败");
-                }
+            public void onClick(View v) {
+                ShareBoardConfig config = new ShareBoardConfig();
+                config.setMenuItemBackgroundShape(ShareBoardConfig.BG_SHAPE_NONE);
+                mShareAction.open(config);
             }
         });
     }
 
-    private void initWebView()
-    {
+    private void initShare() {
+        mShareListener = new CustomShareListener(this);
+        mShareAction = new ShareAction(ZhiHuDetailActivity.this).setDisplayList(
+                SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,
+                SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE)
+                .setShareboardclickCallback(new ShareBoardlistener() {
+                    @Override
+                    public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
+                        if (mStory != null) {
+                            ShareContent content = new ShareContent();
+                            content.mTitle = getResources().getString(R.string.app_name);
+                            content.mText = mStory.getTitle();
+                            content.mTargetUrl = mStory.getShare_url();
+                            new ShareAction(ZhiHuDetailActivity.this)
+                                    .setShareContent(content)
+                                    .setPlatform(share_media)
+                                    .setCallback(mShareListener)
+                                    .share();
+                        }
+                    }
+                });
+    }
+
+    private static class CustomShareListener implements UMShareListener {
+
+        private WeakReference<ZhiHuDetailActivity> mActivity;
+
+        private CustomShareListener(ZhiHuDetailActivity activity) {
+            mActivity = new WeakReference(activity);
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+
+            if (platform.name().equals("WEIXIN_FAVORITE")) {
+                Toast.makeText(mActivity.get(), platform + " 收藏成功啦", Toast.LENGTH_SHORT).show();
+            } else {
+                if (platform != SHARE_MEDIA.MORE
+                        && platform != SHARE_MEDIA.SMS
+                        && platform != SHARE_MEDIA.EMAIL
+                        && platform != SHARE_MEDIA.FLICKR
+                        && platform != SHARE_MEDIA.FOURSQUARE
+                        && platform != SHARE_MEDIA.TUMBLR
+                        && platform != SHARE_MEDIA.POCKET
+                        && platform != SHARE_MEDIA.PINTEREST
+                        && platform != SHARE_MEDIA.LINKEDIN
+                        && platform != SHARE_MEDIA.INSTAGRAM
+                        && platform != SHARE_MEDIA.GOOGLEPLUS
+                        && platform != SHARE_MEDIA.YNOTE
+                        && platform != SHARE_MEDIA.EVERNOTE) {
+                    Toast.makeText(mActivity.get(), platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            if (platform != SHARE_MEDIA.MORE && platform != SHARE_MEDIA.SMS
+                    && platform != SHARE_MEDIA.EMAIL
+                    && platform != SHARE_MEDIA.FLICKR
+                    && platform != SHARE_MEDIA.FOURSQUARE
+                    && platform != SHARE_MEDIA.TUMBLR
+                    && platform != SHARE_MEDIA.POCKET
+                    && platform != SHARE_MEDIA.PINTEREST
+                    && platform != SHARE_MEDIA.LINKEDIN
+                    && platform != SHARE_MEDIA.INSTAGRAM
+                    && platform != SHARE_MEDIA.GOOGLEPLUS
+                    && platform != SHARE_MEDIA.YNOTE
+                    && platform != SHARE_MEDIA.EVERNOTE) {
+                Toast.makeText(mActivity.get(), platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+                if (t != null) {
+                    Log.d("throw", "throw:" + t.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+
+            Toast.makeText(mActivity.get(), platform + " 分享取消了", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initWebView() {
         mWebView.setScrollbarFadingEnabled(true);
         //能够和js交互
         mWebView.getSettings().setJavaScriptEnabled(true);
@@ -135,23 +219,19 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
     }
 
     @Override
-    protected int getLayoutId()
-    {
+    protected int getLayoutId() {
         return R.layout.activity_zhihu_detail;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_refresh, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.action_refresh:
                 mZhihuDetailPresenter.getZhihuDetailData(mId);
                 break;
@@ -170,27 +250,22 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
         mZhihuDetailPresenter.unsubcrible();
 //        dimiss();
     }
 
-    private void dimiss()
-    {
-        if (mAlertDialog != null)
-        {
+    private void dimiss() {
+        if (mAlertDialog != null) {
             mAlertDialog.dismiss();
             mAlertDialog = null;
         }
     }
 
     @Override
-    public void updateZhihuDetailData(ZhihuDailyStory story)
-    {
-        if (story != null)
-        {
+    public void updateZhihuDetailData(ZhihuDailyStory story) {
+        if (story != null) {
             mStory = story;
             mWebView.loadDataWithBaseURL("x-data://base", WebUtils.convertResult(story.getBody()), "text/html", "utf-8", null);
             mWebView.getSettings().setBlockNetworkImage(false);
@@ -201,37 +276,43 @@ public class ZhiHuDetailActivity extends AbsBaseActivity implements IZhihuDetail
                     .error(R.color.mid_grey)
                     .into(mImageView);
             mToolbarLayout.setTitle(story.getTitle());
-        }
-        else
-        {
+        } else {
             mWebView.loadUrl(story.getShare_url());
             Glide.with(this).load(R.drawable.img_tips_error_load_error).into(mImageView);
         }
     }
 
     @Override
-    public void showProgressBar()
-    {
+    public void showProgressBar() {
         //        if (mAlertDialog != null && !mAlertDialog.isShowing())
         //            mAlertDialog.show();
     }
 
     @Override
-    public void hideProgressBar()
-    {
+    public void hideProgressBar() {
 //        dimiss();
     }
 
     @Override
-    public void showError(String error)
-    {
-        SnackbarUtil.showMessage(mWebView, "加载失败", "重试", new View.OnClickListener()
-        {
+    public void showError(String error) {
+        SnackbarUtil.showMessage(mWebView, "加载失败", "重试", new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 mZhihuDetailPresenter.getZhihuDetailData(mId);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        /** attention to this below ,must add this**/
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mShareAction.close();
     }
 }
