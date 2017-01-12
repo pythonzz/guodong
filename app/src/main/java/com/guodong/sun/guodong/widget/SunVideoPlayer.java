@@ -659,6 +659,12 @@ public class SunVideoPlayer extends JCVideoPlayer {
         }
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+//        super.onDetachedFromWindow();
+        releaseAllVideos();
+    }
+
     public class DismissControlViewTimerTask extends TimerTask {
 
         @Override

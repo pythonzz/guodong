@@ -57,6 +57,8 @@ public class AlxGifHelper {
         }
     }
 
+    private static AlxMultiTask mMultiTask;
+
     public static ConcurrentHashMap<String, ArrayList<ProgressViews>> memoryCache;//防止同一个gif文件建立多个下载线程,url和imageView是一对多的关系,如果一个imageView建立了一次下载，那么其他请求这个url的imageView不需要重新开启一次新的下载，这几个imageView同时回调
     //为了防止内存泄漏，这个一对多的关系均使用LRU缓存
 
@@ -360,7 +362,7 @@ public class AlxGifHelper {
      */
     public static void startDownLoad(final String uri, final File os, final DownLoadTask task) {
         final Handler handler = new Handler();
-        new AlxMultiTask<Void, Void, Void>() {//开启一个多线程池，大小为cpu数量+1
+        mMultiTask = new AlxMultiTask<Void, Void, Void>() {//开启一个多线程池，大小为cpu数量+1
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -373,7 +375,15 @@ public class AlxGifHelper {
                 downloadToStream(uri, os, task, handler);
                 return null;
             }
-        }.executeDependSDK();
+        };
+        mMultiTask.executeDependSDK();
+    }
+
+    public static void cancelTask() {
+        if (mMultiTask != null) {
+            mMultiTask.cancel(true);
+            mMultiTask = null;
+        }
     }
 
 

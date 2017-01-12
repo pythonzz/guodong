@@ -17,6 +17,7 @@ import com.guodong.sun.guodong.presenter.presenterImpl.PicturePreenterImpl;
 import com.guodong.sun.guodong.uitls.AppUtil;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.view.IPictureView;
+import com.guodong.sun.guodong.widget.SunVideoPlayer;
 import com.guodong.sun.guodong.widget.WrapContentLinearLayoutManager;
 import com.melnykov.fab.FloatingActionButton;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -68,6 +69,16 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
         if (!isPrepared || !isVisible)
             return;
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                isRefreshing = true;
+//                mAdapter.clearDuanziList();
+                mPicturePreenter.getPictureData();
+            }
+        });
         initRecyclerView();
         initFButton();
         isPrepared = false;
@@ -116,27 +127,6 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
                 }
             }
         });
-
-        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener()
-        {
-            @Override
-            public void onChildViewAttachedToWindow(View view)
-            {
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(View view)
-            {
-                if (JCVideoPlayerManager.getFirst() != null)
-                {
-                    JCVideoPlayer videoPlayer = (JCVideoPlayer) JCVideoPlayerManager.getFirst();
-                    if (((ViewGroup) view).indexOfChild(videoPlayer) != -1 && videoPlayer.currentState == JCVideoPlayer.CURRENT_STATE_PLAYING)
-                    {
-                        JCVideoPlayer.releaseAllVideos();
-                    }
-                }
-            }
-        });
     }
 
     private void loadMoreDate()
@@ -161,6 +151,12 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        hideProgressBar();
+    }
+
+    @Override
     public void updatePictureData(ArrayList<Picture.DataBeanX.DataBean> list)
     {
         // 注意addList() 和 onLoadFinish()的调用顺序
@@ -174,16 +170,6 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
     {
         isRefreshing = true;
         mSwipeRefreshLayout.setRefreshing(true);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                isRefreshing = true;
-//                mAdapter.clearDuanziList();
-                mPicturePreenter.getPictureData();
-            }
-        });
     }
 
     @Override
