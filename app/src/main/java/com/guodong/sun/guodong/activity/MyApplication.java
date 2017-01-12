@@ -9,6 +9,7 @@ import com.antfortune.freeline.FreelineCore;
 import com.guodong.sun.guodong.CrashHandler;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
@@ -30,8 +31,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3"); // 需要修改
-//        PlatformConfig.setQQZone("1105733003", "9FqrDa2AbrdessRY"); // 不需要修改
+//        Config.DEBUG = true;
 //        UMShareAPI.get(this);
         FreelineCore.init(this);
         mRefWatcher = LeakCanary.install(this);
@@ -50,4 +50,9 @@ public class MyApplication extends Application {
     public static MyApplication getInstance() {
         return sInstance;
     }
+
+//    {
+//        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3"); // 需要修改
+//        PlatformConfig.setQQZone("1105733003", "9FqrDa2AbrdessRY"); // 需要修改
+//    }
 }
