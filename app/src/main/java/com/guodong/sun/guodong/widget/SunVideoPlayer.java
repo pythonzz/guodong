@@ -174,6 +174,7 @@ public class SunVideoPlayer extends JCVideoPlayer {
                 return;
             }
             if (currentState == CURRENT_STATE_NORMAL) {
+                WIFI_TIP_DIALOG_SHOWED = true;
                 if (!url.startsWith("file") && !JCUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
                     showWifiDialog();
                     return;

@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 
     <!-- Glide与OkHttp3集成 -->
     <meta-data
@@ -19,6 +22,10 @@
     <meta-data
         android:name="com.guodong.sun.guodong.glide.GlideCache"
         android:value="GlideModule"/>
+    <!-- 友盟社会化分享 -->
+    <!--<meta-data
+        android:name="UMENG_APPKEY"
+        android:value="582076f69f06fd4a220009f0"/>-->
 
     <application
         android:name=".activity.MyApplication"
@@ -38,38 +45,73 @@
             </intent-filter>
         </activity>
 
+        <!-- 妹子大图Activity -->
         <activity
             android:name=".activity.MeiziActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Transparent"/>
 
+        <!-- 长图查看Activty -->
         <activity
             android:name=".activity.LongPictureActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Transparent"/>
 
+        <!-- 多图查看Activity -->
         <activity
             android:name=".activity.MultiPictureActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Transparent"/>
 
+        <!-- 多动图查看Activity -->
         <activity
             android:name=".activity.MultiGifActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Transparent"/>
 
+        <!-- 知乎详情Activity -->
         <activity
             android:name=".activity.ZhiHuDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
 
+        <!-- 关于我Activity -->
         <activity
             android:name=".activity.AboutMeActivity"
             android:screenOrientation="portrait"/>
+
+        <!-- QQ分享 -->
+        <activity
+            android:name="com.umeng.qq.tencent.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="tencent100424468"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.umeng.qq.tencent.AssistActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <!-- 微信分享 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
     </application>
 

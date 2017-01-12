@@ -1,4 +1,4 @@
-package com.guodong.sun.guodong.activity;
+package com.guodong.sun.guodong.wxapi;
 
 
 import com.umeng.weixin.callback.WXCallbackActivity;

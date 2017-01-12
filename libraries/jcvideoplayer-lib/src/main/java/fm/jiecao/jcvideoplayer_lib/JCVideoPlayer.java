@@ -410,9 +410,11 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
     public void cancelProgressTimer() {
         if (UPDATE_PROGRESS_TIMER != null) {
             UPDATE_PROGRESS_TIMER.cancel();
+            UPDATE_PROGRESS_TIMER = null;
         }
         if (mProgressTimerTask != null) {
             mProgressTimerTask.cancel();
+            mProgressTimerTask = null;
         }
     }
 
@@ -478,7 +480,8 @@ public abstract class JCVideoPlayer extends FrameLayout implements JCMediaPlayer
 
         // 清理cover image,回收bitmap内存
         clearCacheImage();
-
+        cancelProgressTimer();
+        JCMediaManager.textureView = null;
     }
 
     @Override

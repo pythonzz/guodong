@@ -362,7 +362,7 @@ public class AlxGifHelper {
      */
     public static void startDownLoad(final String uri, final File os, final DownLoadTask task) {
         final Handler handler = new Handler();
-        mMultiTask = new AlxMultiTask<Void, Void, Void>() {//开启一个多线程池，大小为cpu数量+1
+        new AlxMultiTask<Void, Void, Void>() {//开启一个多线程池，大小为cpu数量+1
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -375,8 +375,7 @@ public class AlxGifHelper {
                 downloadToStream(uri, os, task, handler);
                 return null;
             }
-        };
-        mMultiTask.executeDependSDK();
+        }.executeDependSDK();
     }
 
     public static void cancelTask() {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">果冻</string>
+    <string name="app_name">小逗</string>
 
     <string name="open">打开</string>
     <string name="close">关闭</string>
@@ -16,11 +16,17 @@
     <string name="noNetwork">数据加载失败,请重新加载或者检查网络是否链接</string>
     <string name="loaderror">加载失败~(≧▽≦)~啦啦啦.</string>
 
+    <string name="umeng_socialize_share">分享</string>
+    <string name="umeng_socialize_text_waitting_share">分享中&#8230;</string>
+    <string name="umeng_socialize_content_hint">说点啥&#8230;</string>
+    <string name="umeng_socialize_cancel_btn_str">取消</string>
+    <string name="umeng_socialize_send_btn_str">发送</string>
     <string name="umeng_socialize_text_qq_key">QQ</string>
     <string name="umeng_socialize_text_qq_zone_key">QQ空间</string>
     <string name="umeng_socialize_text_weixin_key">微信</string>
     <string name="umeng_socialize_text_weixin_circle_key">微信朋友圈</string>
     <string name="umeng_socialize_text_weixin_fav_key">微信收藏</string>
+
     <string name="click_pic">点击查看长图</string>
     <string name="picture_conut">%1$d/%2$d</string>
 
