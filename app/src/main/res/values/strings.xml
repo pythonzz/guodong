@@ -29,6 +29,7 @@
 
     <string name="click_pic">点击查看长图</string>
     <string name="picture_conut">%1$d/%2$d</string>
+    <string name="version">当前版本：%1$s</string>
 
     <string-array name="titles">
         <item>@string/zhihu</item>
