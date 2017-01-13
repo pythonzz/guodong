@@ -57,7 +57,7 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
     @Override
     public DuanziViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        return new DuanziViewHolder(mInflater.inflate(R.layout.fragment_duanzi_item, parent, false));
+        return new DuanziViewHolder(mInflater.inflate(R.layout.fragment_qiubai_item, parent, false));
     }
 
     @Override
@@ -103,17 +103,6 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
 
     private void share(final QiuShiBaiKe.Item qiubai)
     {
-//        try
-//        {
-//            Intent i = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
-//            String text = qiubai.getContent();
-//            i.putExtra(Intent.EXTRA_TEXT, text);
-//            mContext.startActivity(Intent.createChooser(i, "分享至"));
-//        } catch (ActivityNotFoundException ex)
-//        {
-//            SnackbarUtil.showMessage(view, "没有可分享的App");
-//        }
-
         new ShareAction((MainActivity)mContext)
                 .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,
                         SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE)

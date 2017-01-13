@@ -653,6 +653,51 @@ public class NeiHanDuanZi
 
     public class Comment {
 
+        private String text;
+        private String share_url;
+        private String user_name;
+        private int digg_count;
+        private String avatar_url;
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public String getShare_url() {
+            return share_url;
+        }
+
+        public void setShare_url(String share_url) {
+            this.share_url = share_url;
+        }
+
+        public String getUser_name() {
+            return user_name;
+        }
+
+        public void setUser_name(String user_name) {
+            this.user_name = user_name;
+        }
+
+        public int getDigg_count() {
+            return digg_count;
+        }
+
+        public void setDigg_count(int digg_count) {
+            this.digg_count = digg_count;
+        }
+
+        public String getAvatar_url() {
+            return avatar_url;
+        }
+
+        public void setAvatar_url(String avatar_url) {
+            this.avatar_url = avatar_url;
+        }
     }
 
     public class Ad {
