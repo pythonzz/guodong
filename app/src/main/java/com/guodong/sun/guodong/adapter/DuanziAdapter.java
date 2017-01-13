@@ -1,15 +1,14 @@
 package com.guodong.sun.guodong.adapter;
 
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.activity.MainActivity;
 import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
@@ -18,7 +17,6 @@ import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
 import com.guodong.sun.guodong.uitls.AnimatorUtils;
 import com.guodong.sun.guodong.uitls.DateTimeHelper;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
-import com.squareup.haha.perflib.Main;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.ShareContent;
 import com.umeng.socialize.bean.SHARE_MEDIA;
