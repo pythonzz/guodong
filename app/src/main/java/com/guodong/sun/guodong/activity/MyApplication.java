@@ -42,8 +42,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Config.DEBUG = true;
-        UMShareAPI.init(this, "582076f69f06fd4a220009f0");
         FreelineCore.init(this);
         mRefWatcher = LeakCanary.install(this);
         sInstance = this;
@@ -51,6 +49,7 @@ public class MyApplication extends Application {
         crashHandler.init(this);
         crashHandler.setDebug(true);
 
+        UmengConfig();
         WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
@@ -62,8 +61,25 @@ public class MyApplication extends Application {
         return sInstance;
     }
 
-    {
-        PlatformConfig.setWeixin("wxad830cfdd75835c0", "c09c9464d46312c00b3672bb3f16daa5"); // 不需要修改
-        PlatformConfig.setQQZone("1105733003", "9FqrDa2AbrdessRY"); // 不需要修改
+    private void UmengConfig() {
+        Properties pro = new Properties();
+        String qq_id = null, qq_key = null, wx_id = null, wx_secret = null, umeng_key = null;
+
+        try {
+            InputStream is = sInstance.getAssets().open("umeng.properties");
+            pro.load(is);
+            umeng_key = pro.getProperty("umeng.key");
+            qq_id = pro.getProperty("qq.id");
+            qq_key = pro.getProperty("qq.key");
+            wx_id = pro.getProperty("wx.id");
+            wx_secret = pro.getProperty("wx.secret");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Config.DEBUG = true;
+        UMShareAPI.init(this, umeng_key); // 不需要修改
+        PlatformConfig.setWeixin(wx_id, wx_secret); // 不需要修改
+        PlatformConfig.setQQZone(qq_id, qq_key); // 不需要修改
     }
 }

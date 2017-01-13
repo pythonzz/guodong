@@ -1,6 +1,7 @@
 package com.guodong.sun.guodong.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.adapter.HomePagerAdapter;
 import com.guodong.sun.guodong.base.AbsBaseActivity;
 import com.guodong.sun.guodong.glide.GlideCacheUtil;
+import com.umeng.socialize.UMShareAPI;
 
 import butterknife.BindView;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
@@ -156,6 +158,12 @@ public class MainActivity extends AbsBaseActivity {
     protected void onPause() {
         super.onPause();
         JCVideoPlayer.releaseAllVideos();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

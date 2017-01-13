@@ -34,4 +34,22 @@ public class StringUtils {
         }
         return str;
     }
+
+    /**
+     * 千转万、十万
+     *
+     * @param str
+     * @return
+     */
+    public static String getStr2W(String str) {
+        int length = str.length();
+        if (length == 5) {
+            str = str.substring(0, 1) + "." + str.substring(1, 2) + "万";
+            return str;
+        } else if (length == 6) {
+            str = str.substring(0, 2) + "万";
+            return str;
+        }
+        return str;
+    }
 }

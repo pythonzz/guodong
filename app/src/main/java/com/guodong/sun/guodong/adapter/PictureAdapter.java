@@ -19,12 +19,14 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.activity.LongPictureActivity;
+import com.guodong.sun.guodong.activity.MainActivity;
 import com.guodong.sun.guodong.activity.MultiGifActivity;
 import com.guodong.sun.guodong.activity.MultiPictureActivity;
 import com.guodong.sun.guodong.activity.MyApplication;
 import com.guodong.sun.guodong.entity.picture.Picture;
 import com.guodong.sun.guodong.entity.picture.ThumbImageList;
 import com.guodong.sun.guodong.glide.CircleImageTransform;
+import com.guodong.sun.guodong.listener.CustomShareListener;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
 import com.guodong.sun.guodong.uitls.AlxGifHelper;
 import com.guodong.sun.guodong.uitls.StringUtils;
@@ -33,6 +35,12 @@ import com.guodong.sun.guodong.widget.NineGridImageViewAdapter;
 import com.guodong.sun.guodong.widget.ResizableImageView;
 import com.guodong.sun.guodong.widget.SpacingTextView;
 import com.guodong.sun.guodong.widget.SunVideoPlayer;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.ShareContent;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.shareboard.ShareBoardConfig;
+import com.umeng.socialize.shareboard.SnsPlatform;
+import com.umeng.socialize.utils.ShareBoardlistener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -345,7 +353,7 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         displayMultiImage(holder, bean);
     }
 
-    private void displayTopAndBottom(PictureViewHolder holder, Picture.DataBeanX.DataBean.GroupBean bean) {
+    private void displayTopAndBottom(PictureViewHolder holder, final Picture.DataBeanX.DataBean.GroupBean bean) {
         holder.user_name.setText(bean.getUser().getName());
         if (TextUtils.isEmpty(bean.getContent()))
             setViewGone(holder.item_content);
@@ -355,7 +363,31 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.item_digg.setText(StringUtils.getStr2W(bean.getDigg_count()));
         holder.item_bury.setText(StringUtils.getStr2W(bean.getBury_count()));
         holder.item_comment.setText(StringUtils.getStr2W(bean.getComment_count()));
-        holder.item_share.setText(StringUtils.getStr2W(bean.getShare_count()));
+        holder.item_share_count.setText(StringUtils.getStr2W(bean.getShare_count()));
+        holder.item_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ShareAction((MainActivity)mContext)
+                        .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,
+                                SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE)
+                        .setShareboardclickCallback(new ShareBoardlistener() {
+                            @Override
+                            public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
+                                if (bean != null) {
+                                    ShareContent content = new ShareContent();
+                                    content.mTitle = mContext.getResources().getString(R.string.app_name);
+                                    content.mText = bean.getContent();
+                                    content.mTargetUrl = bean.getShare_url();
+                                    new ShareAction((MainActivity)mContext)
+                                            .setShareContent(content)
+                                            .setPlatform(share_media)
+                                            .setCallback(new CustomShareListener((MainActivity)mContext))
+                                            .share();
+                                }
+                            }
+                        }).open(new ShareBoardConfig().setMenuItemBackgroundColor(ShareBoardConfig.BG_SHAPE_NONE));
+            }
+        });
         Glide.with(mContext)
                 .load(bean.getUser().getAvatar_url())
                 .bitmapTransform(new CircleImageTransform(mContext))
@@ -476,8 +508,11 @@ public class PictureAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @BindView(R.id.picture_item_digg)
         TextView item_digg;
 
+        @BindView(R.id.picture_item_share_count)
+        TextView item_share_count;
+
         @BindView(R.id.picture_item_share)
-        TextView item_share;
+        RelativeLayout item_share;
 
         @BindView(R.id.picture_item_bury)
         TextView item_bury;

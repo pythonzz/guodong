@@ -16,10 +16,25 @@ android {
 
     signingConfigs { // 签名，你可以配置多个签名，然后再在buildTypes 进行指定。
         release {
-            storeFile file("../guodong.jks") // 签名文件存放路径
-            storePassword "112120"
-            keyAlias "guodong"
-            keyPassword "112120"
+
+            //加载资源
+            Properties properties = new Properties()
+            InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream()
+            properties.load( inputStream )
+
+            //读取文件
+            def sdkDir = properties.getProperty('keyfile')
+            storeFile file(sdkDir)
+
+            //读取字段
+            def key_storePassword = properties.getProperty('storePassword')
+            def key_keyAlias = properties.getProperty('keyAlias')
+            def key_keyPassword = properties.getProperty('keyPassword')
+
+//            storeFile file("../guodong.jks") // 签名文件存放路径
+            storePassword key_storePassword
+            keyAlias key_keyAlias
+            keyPassword key_keyPassword
         }
     }
 
@@ -39,6 +54,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 

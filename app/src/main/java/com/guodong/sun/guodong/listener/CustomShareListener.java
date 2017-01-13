@@ -19,47 +19,79 @@ public class CustomShareListener implements UMShareListener {
 
     @Override
     public void onResult(SHARE_MEDIA platform) {
+        switch (platform) {
+            case QQ:
+                Toast.makeText(mActivity.get(), "QQ 分享成功", Toast.LENGTH_SHORT).show();
+                break;
 
-        if (platform != SHARE_MEDIA.MORE
-                && platform != SHARE_MEDIA.SMS
-                && platform != SHARE_MEDIA.EMAIL
-                && platform != SHARE_MEDIA.FLICKR
-                && platform != SHARE_MEDIA.FOURSQUARE
-                && platform != SHARE_MEDIA.TUMBLR
-                && platform != SHARE_MEDIA.POCKET
-                && platform != SHARE_MEDIA.PINTEREST
-                && platform != SHARE_MEDIA.LINKEDIN
-                && platform != SHARE_MEDIA.INSTAGRAM
-                && platform != SHARE_MEDIA.GOOGLEPLUS
-                && platform != SHARE_MEDIA.YNOTE
-                && platform != SHARE_MEDIA.EVERNOTE) {
-            Toast.makeText(mActivity.get(), platform + " 分享成功", Toast.LENGTH_SHORT).show();
+            case QZONE:
+                Toast.makeText(mActivity.get(), "QQ空间 分享成功", Toast.LENGTH_SHORT).show();
+                break;
+
+            case WEIXIN:
+                Toast.makeText(mActivity.get(), "微信 分享成功", Toast.LENGTH_SHORT).show();
+                break;
+
+            case WEIXIN_CIRCLE:
+                Toast.makeText(mActivity.get(), "微信朋友圈 分享成功", Toast.LENGTH_SHORT).show();
+                break;
+
+            default:
+                break;
         }
     }
 
     @Override
     public void onError(SHARE_MEDIA platform, Throwable t) {
-        if (platform != SHARE_MEDIA.MORE && platform != SHARE_MEDIA.SMS
-                && platform != SHARE_MEDIA.EMAIL
-                && platform != SHARE_MEDIA.FLICKR
-                && platform != SHARE_MEDIA.FOURSQUARE
-                && platform != SHARE_MEDIA.TUMBLR
-                && platform != SHARE_MEDIA.POCKET
-                && platform != SHARE_MEDIA.PINTEREST
-                && platform != SHARE_MEDIA.LINKEDIN
-                && platform != SHARE_MEDIA.INSTAGRAM
-                && platform != SHARE_MEDIA.GOOGLEPLUS
-                && platform != SHARE_MEDIA.YNOTE
-                && platform != SHARE_MEDIA.EVERNOTE) {
-            Toast.makeText(mActivity.get(), platform + " 分享失败", Toast.LENGTH_SHORT).show();
-            if (t != null) {
-                Log.d("throw", "throw:" + t.getMessage());
-            }
+        switch (platform) {
+            case QQ:
+                Toast.makeText(mActivity.get(), "QQ 分享失败,请稍后重试", Toast.LENGTH_SHORT).show();
+                break;
+
+            case QZONE:
+                Toast.makeText(mActivity.get(), "QQ空间 分享失败,请稍后重试", Toast.LENGTH_SHORT).show();
+                break;
+
+            case WEIXIN:
+                Toast.makeText(mActivity.get(), "微信 分享失败,请稍后重试", Toast.LENGTH_SHORT).show();
+                break;
+
+            case WEIXIN_CIRCLE:
+                Toast.makeText(mActivity.get(), "微信朋友圈 分享失败,请稍后重试", Toast.LENGTH_SHORT).show();
+                break;
+
+            default:
+                Toast.makeText(mActivity.get(), "啊哦,分享失败了,请稍后重试", Toast.LENGTH_SHORT).show();
+                break;
         }
-    }
+
+        if (t != null) {
+            Log.e("umeng", "throw:" + t.getMessage());
+        }
+}
 
     @Override
     public void onCancel(SHARE_MEDIA platform) {
-        Toast.makeText(mActivity.get(), platform + " 分享取消", Toast.LENGTH_SHORT).show();
+        switch (platform) {
+            case QQ:
+                Toast.makeText(mActivity.get(), "您取消了 QQ 分享", Toast.LENGTH_SHORT).show();
+                break;
+
+            case QZONE:
+                Toast.makeText(mActivity.get(), "您取消了 QQ空间 分享", Toast.LENGTH_SHORT).show();
+                break;
+
+            case WEIXIN:
+                Toast.makeText(mActivity.get(), "您取消了 微信 分享", Toast.LENGTH_SHORT).show();
+                break;
+
+            case WEIXIN_CIRCLE:
+                Toast.makeText(mActivity.get(), "您取消了 微信朋友圈 分享", Toast.LENGTH_SHORT).show();
+                break;
+
+            default:
+                Toast.makeText(mActivity.get(), "您取消了分享", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }

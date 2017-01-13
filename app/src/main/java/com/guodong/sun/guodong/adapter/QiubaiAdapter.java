@@ -12,11 +12,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.guodong.sun.guodong.R;
+import com.guodong.sun.guodong.activity.MainActivity;
 import com.guodong.sun.guodong.entity.qiubai.QiuShiBaiKe;
+import com.guodong.sun.guodong.listener.CustomShareListener;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
 import com.guodong.sun.guodong.uitls.AnimatorUtils;
 import com.guodong.sun.guodong.uitls.DateTimeHelper;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.ShareContent;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.shareboard.ShareBoardConfig;
+import com.umeng.socialize.shareboard.SnsPlatform;
+import com.umeng.socialize.utils.ShareBoardlistener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,7 +78,7 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
             @Override
             public void onClick(View view)
             {
-                share(view, qiubai);
+                share(qiubai);
             }
         });
 
@@ -93,18 +101,38 @@ public class QiubaiAdapter extends RecyclerView.Adapter<QiubaiAdapter.DuanziView
         SnackbarUtil.showMessage(view, "内容已复制到剪贴板");
     }
 
-    private void share(View view, QiuShiBaiKe.Item qiubai)
+    private void share(final QiuShiBaiKe.Item qiubai)
     {
-        try
-        {
-            Intent i = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
-            String text = qiubai.getContent();
-            i.putExtra(Intent.EXTRA_TEXT, text);
-            mContext.startActivity(Intent.createChooser(i, "分享至"));
-        } catch (ActivityNotFoundException ex)
-        {
-            SnackbarUtil.showMessage(view, "没有可分享的App");
-        }
+//        try
+//        {
+//            Intent i = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
+//            String text = qiubai.getContent();
+//            i.putExtra(Intent.EXTRA_TEXT, text);
+//            mContext.startActivity(Intent.createChooser(i, "分享至"));
+//        } catch (ActivityNotFoundException ex)
+//        {
+//            SnackbarUtil.showMessage(view, "没有可分享的App");
+//        }
+
+        new ShareAction((MainActivity)mContext)
+                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,
+                        SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE)
+                .setShareboardclickCallback(new ShareBoardlistener() {
+                    @Override
+                    public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
+                        if (qiubai != null) {
+                            ShareContent content = new ShareContent();
+                            content.mTitle = mContext.getResources().getString(R.string.app_name);
+                            content.mText = qiubai.getContent();
+                            content.mTargetUrl = "http://www.qiushibaike.com/share/" + qiubai.getId();
+                            new ShareAction((MainActivity)mContext)
+                                    .setShareContent(content)
+                                    .setPlatform(share_media)
+                                    .setCallback(new CustomShareListener((MainActivity)mContext))
+                                    .share();
+                        }
+                    }
+                }).open(new ShareBoardConfig().setMenuItemBackgroundColor(ShareBoardConfig.BG_SHAPE_NONE));
     }
 
     @Override
