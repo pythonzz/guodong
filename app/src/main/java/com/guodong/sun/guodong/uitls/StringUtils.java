@@ -24,15 +24,7 @@ public class StringUtils {
      */
     public static String getStr2W(int s) {
         String str = String.valueOf(s);
-        int length = str.length();
-        if (length == 5) {
-            str = str.substring(0, 1) + "." + str.substring(1, 2) + "万";
-            return str;
-        } else if (length == 6) {
-            str = str.substring(0, 2) + "万";
-            return str;
-        }
-        return str;
+        return getStr2W(str);
     }
 
     /**
