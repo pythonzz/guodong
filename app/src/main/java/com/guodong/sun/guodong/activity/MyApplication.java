@@ -64,9 +64,10 @@ public class MyApplication extends Application {
     private void UmengConfig() {
         Properties pro = new Properties();
         String qq_id = null, qq_key = null, wx_id = null, wx_secret = null, umeng_key = null;
+        InputStream is = null;
 
         try {
-            InputStream is = sInstance.getAssets().open("umeng.properties");
+            is = sInstance.getAssets().open("umeng.properties");
             pro.load(is);
             umeng_key = pro.getProperty("umeng.key");
             qq_id = pro.getProperty("qq.id");
@@ -75,6 +76,14 @@ public class MyApplication extends Application {
             wx_secret = pro.getProperty("wx.secret");
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Config.DEBUG = true;

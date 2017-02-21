@@ -11,6 +11,7 @@ import com.trello.rxlifecycle.LifecycleTransformer;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 
@@ -30,10 +31,17 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
 
     @Override
     public void getMeiziData(int page) {
-        mMeiziView.showProgressBar();
+
         Subscription subscription = ApiHelper.getInstance().getGankApi().getMeizhiData(page)
                 .compose(bind)
                 .subscribeOn(Schedulers.io())
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mMeiziView.showProgressBar();
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<MeiziList>() {
                     @Override

@@ -1,7 +1,5 @@
 package com.guodong.sun.guodong.adapter;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,9 +17,6 @@ import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
 import com.guodong.sun.guodong.glide.CircleImageTransform;
 import com.guodong.sun.guodong.listener.CustomShareListener;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
-import com.guodong.sun.guodong.uitls.AnimatorUtils;
-import com.guodong.sun.guodong.uitls.DateTimeHelper;
-import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.guodong.sun.guodong.widget.SpacingTextView;
 import com.umeng.socialize.ShareAction;
@@ -32,12 +27,9 @@ import com.umeng.socialize.shareboard.SnsPlatform;
 import com.umeng.socialize.utils.ShareBoardlistener;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by Administrator on 2016/10/10.

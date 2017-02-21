@@ -17,7 +17,7 @@ public abstract class AbsBasePresenter<T>
 
     public void attachView(T view)
     {
-        mViewRef = new WeakReference<T>(view);
+        mViewRef = new WeakReference<>(view);
     }
 
     public T getView()

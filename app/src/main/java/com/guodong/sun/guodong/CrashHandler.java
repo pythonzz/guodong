@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Sun on 2016/9/19.
@@ -47,7 +48,7 @@ public enum CrashHandler implements Thread.UncaughtExceptionHandler
     {
         try
         {
-            if (!DEBUG)
+            if (DEBUG)
             {
                 // 导出异常信息到SDCard中
                 dumpExceptionToSDCard(throwable);
@@ -88,7 +89,7 @@ public enum CrashHandler implements Thread.UncaughtExceptionHandler
             }
 
             long currentTime = System.currentTimeMillis();
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(currentTime));
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date(currentTime));
             file = new File(PATH + FILE_NAME + time + FILE_NAME_SUFFIX);
 
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
