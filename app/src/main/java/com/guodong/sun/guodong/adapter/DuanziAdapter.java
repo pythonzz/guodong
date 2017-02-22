@@ -19,6 +19,7 @@ import com.guodong.sun.guodong.listener.CustomShareListener;
 import com.guodong.sun.guodong.listener.OnLoadMoreLisener;
 import com.guodong.sun.guodong.uitls.StringUtils;
 import com.guodong.sun.guodong.widget.SpacingTextView;
+import com.guodong.sun.guodong.widget.TextDrawable;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.ShareContent;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -85,7 +86,7 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
         NeiHanDuanZi.Comment comment = comments.get(0);
         holder.item_shenping_one.setVisibility(View.VISIBLE);
         holder.item_shenping_one_user_name.setText(comment.getUser_name());
-        holder.item_shenping_one_digg.setText(comment.getDigg_count());
+        holder.item_shenping_one_digg.setText(StringUtils.getStr2W(comment.getDigg_count()));
         holder.item_shenping_one_content.setText(comment.getText());
         Glide.with(mContext).load(comment.getAvatar_url())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -103,7 +104,7 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
         NeiHanDuanZi.Comment comment = comments.get(1);
         holder.item_shenping_two.setVisibility(View.VISIBLE);
         holder.item_shenping_two_user_name.setText(comment.getUser_name());
-        holder.item_shenping_two_digg.setText(comment.getDigg_count());
+        holder.item_shenping_two_digg.setText(StringUtils.getStr2W(comment.getDigg_count()));
         holder.item_shenping_two_content.setText(comment.getText());
         Glide.with(mContext).load(comment.getAvatar_url())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -212,7 +213,7 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
         return isLoading ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    class DuanziViewHolder extends RecyclerView.ViewHolder {
+    static class DuanziViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.picture_item_user_avatar)
         ImageView user_avatar;
 
@@ -253,7 +254,7 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
         TextView item_shenping_one_user_name;
 
         @BindView(R.id.shenping_one_digg)
-        TextView item_shenping_one_digg;
+        TextDrawable item_shenping_one_digg;
 
         @BindView(R.id.shenping_one_content)
         TextView item_shenping_one_content;
@@ -271,7 +272,7 @@ public class DuanziAdapter extends RecyclerView.Adapter<DuanziAdapter.DuanziView
         TextView item_shenping_two_user_name;
 
         @BindView(R.id.shenping_two_digg)
-        TextView item_shenping_two_digg;
+        TextDrawable item_shenping_two_digg;
 
         @BindView(R.id.shenping_two_content)
         TextView item_shenping_two_content;

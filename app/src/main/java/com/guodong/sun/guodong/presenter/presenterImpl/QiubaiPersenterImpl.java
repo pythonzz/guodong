@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.guodong.sun.guodong.Config;
 import com.guodong.sun.guodong.api.ApiHelper;
+import com.guodong.sun.guodong.api.QiuBaiApi;
 import com.guodong.sun.guodong.entity.qiubai.QiuShiBaiKe;
 import com.guodong.sun.guodong.presenter.IQiubaiPresenter;
 import com.guodong.sun.guodong.uitls.CacheUtil;
@@ -40,7 +41,7 @@ public class QiubaiPersenterImpl extends BasePresenterImpl implements IQiubaiPre
     public void getQiubaiData(int page)
     {
         mQiubaiView.showProgressBar();
-        Subscription subscription = ApiHelper.getInstance().getQiuBaiApi().getQiuBaiData(page)
+        Subscription subscription = ApiHelper.getInstance().getApi(QiuBaiApi.class, ApiHelper.QIUBAI_BASE_URL).getQiuBaiData(page)
                 .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

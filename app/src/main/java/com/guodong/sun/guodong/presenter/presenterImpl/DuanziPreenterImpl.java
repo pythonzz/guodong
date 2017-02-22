@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.guodong.sun.guodong.Config;
 import com.guodong.sun.guodong.api.ApiHelper;
+import com.guodong.sun.guodong.api.DuanZiApi;
 import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
 import com.guodong.sun.guodong.presenter.IDuanziPresenter;
 import com.guodong.sun.guodong.uitls.CacheUtil;
@@ -43,7 +44,7 @@ public class DuanziPreenterImpl extends BasePresenterImpl implements IDuanziPres
         mDuanziView.showProgressBar();
         Subscription subscription = ApiHelper
                 .getInstance()
-                .getDuanZiApi()
+                .getApi(DuanZiApi.class, ApiHelper.DUANZI_BASE_URL)
                 .getDuanZiData(page)
                 .compose(bind)
                 .subscribeOn(Schedulers.io())

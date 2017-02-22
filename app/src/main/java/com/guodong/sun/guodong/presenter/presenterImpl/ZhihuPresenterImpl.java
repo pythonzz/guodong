@@ -2,6 +2,7 @@ package com.guodong.sun.guodong.presenter.presenterImpl;
 
 import com.google.gson.Gson;
 import com.guodong.sun.guodong.api.ApiHelper;
+import com.guodong.sun.guodong.api.ZhiHuApi;
 import com.guodong.sun.guodong.entity.zhihu.ZhihuDailyNews;
 import com.guodong.sun.guodong.presenter.IZhihuPresenter;
 import com.guodong.sun.guodong.uitls.DateTimeHelper;
@@ -36,7 +37,7 @@ public class ZhihuPresenterImpl extends BasePresenterImpl implements IZhihuPrese
         mZhihuView.showProgressBar();
         Subscription subscription = ApiHelper
                 .getInstance()
-                .getZhiHuApi()
+                .getApi(ZhiHuApi.class, ApiHelper.ZHIHU_BASE_URL)
                 .getZhiHuData(DateTimeHelper.formatZhihuDailyDate(data))
                 .compose(bind)
                 .subscribeOn(Schedulers.io())

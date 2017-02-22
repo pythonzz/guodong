@@ -2,6 +2,7 @@ package com.guodong.sun.guodong.presenter.presenterImpl;
 
 import com.google.gson.Gson;
 import com.guodong.sun.guodong.api.ApiHelper;
+import com.guodong.sun.guodong.api.DuanZiApi;
 import com.guodong.sun.guodong.entity.duanzi.NeiHanVideo;
 import com.guodong.sun.guodong.entity.duanzi.VideoData;
 import com.guodong.sun.guodong.presenter.IVideoPresenter;
@@ -38,7 +39,7 @@ public class VideoPresenterImpl extends BasePresenterImpl implements IVideoPrese
     {
         mVideoView.showProgressBar();
         Subscription subscription = ApiHelper.getInstance()
-                .getDuanZiApi().getVideoData(page)
+                .getApi(DuanZiApi.class, ApiHelper.DUANZI_BASE_URL).getVideoData(page)
                 .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -3,6 +3,7 @@ package com.guodong.sun.guodong.presenter.presenterImpl;
 import android.content.Context;
 
 import com.guodong.sun.guodong.api.ApiHelper;
+import com.guodong.sun.guodong.api.GankApi;
 import com.guodong.sun.guodong.entity.meizi.MeiziList;
 import com.guodong.sun.guodong.presenter.IMeiziPresenter;
 import com.guodong.sun.guodong.view.IMeiziView;
@@ -32,7 +33,7 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
     @Override
     public void getMeiziData(int page) {
 
-        Subscription subscription = ApiHelper.getInstance().getGankApi().getMeizhiData(page)
+        Subscription subscription = ApiHelper.getInstance().getApi(GankApi.class, ApiHelper.MEIZI_BASE_URL).getMeizhiData(page)
                 .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe(new Action0() {

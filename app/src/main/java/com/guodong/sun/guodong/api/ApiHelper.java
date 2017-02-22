@@ -36,23 +36,7 @@ public class ApiHelper
         return sInstance;
     }
 
-    public GankApi getGankApi()
-    {
-        return RetrofitHelper.getInstance().createService(GankApi.class, MEIZI_BASE_URL);
-    }
-
-    public DuanZiApi getDuanZiApi()
-    {
-        return RetrofitHelper.getInstance().createService(DuanZiApi.class, DUANZI_BASE_URL);
-    }
-
-    public QiuBaiApi getQiuBaiApi()
-    {
-        return RetrofitHelper.getInstance().createService(QiuBaiApi.class, QIUBAI_BASE_URL);
-    }
-
-    public ZhiHuApi getZhiHuApi()
-    {
-        return RetrofitHelper.getInstance().createService(ZhiHuApi.class, ZHIHU_BASE_URL);
+    public <T> T getApi(Class<T> cls, String baseUrl) {
+        return RetrofitHelper.getInstance().createService(cls, baseUrl);
     }
 }
