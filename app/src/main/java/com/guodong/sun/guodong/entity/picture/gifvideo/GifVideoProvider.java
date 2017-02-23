@@ -24,14 +24,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
-/**
- * <p> 描述
- *
- * @author 孙国栋
- * @version 1.0
- * @date 2017-02-22 16:56
- * @see
- */
 public class GifVideoProvider extends PictureFrameProvider<GifVideoBean, GifVideoProvider.ViewHolder> {
 
     @Override

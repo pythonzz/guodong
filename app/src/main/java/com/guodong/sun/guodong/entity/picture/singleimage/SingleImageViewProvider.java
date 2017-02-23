@@ -17,14 +17,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * <p> 描述
- *
- * @author 孙国栋
- * @version 1.0
- * @date 2017-02-22 15:31
- * @see
- */
 public class SingleImageViewProvider extends PictureFrameProvider<SingleImage, SingleImageViewProvider.ViewHolder> {
 
     @Override

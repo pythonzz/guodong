@@ -20,14 +20,6 @@ import com.guodong.sun.guodong.entity.picture.PictureFrameProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * <p> 描述
- *
- * @author 孙国栋
- * @version 1.0
- * @date 2017-02-22 15:31
- * @see
- */
 public class LongImageViewProvider extends PictureFrameProvider<LongImage, LongImageViewProvider.ViewHolder> {
 
     @Override

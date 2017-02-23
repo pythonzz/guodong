@@ -24,14 +24,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * <p> 描述
- *
- * @author 孙国栋
- * @version 1.0
- * @date 2017-02-22 16:42
- * @see
- */
 public class MultiImageProvider extends PictureFrameProvider<MultiImage, MultiImageProvider.ViewHolder> {
 
     @Override

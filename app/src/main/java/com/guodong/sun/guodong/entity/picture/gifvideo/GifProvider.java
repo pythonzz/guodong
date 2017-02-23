@@ -23,14 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.droidsonroids.gif.GifImageView;
 
-/**
- * <p> 描述
- *
- * @author 孙国栋
- * @version 1.0
- * @date 2017-02-22 16:51
- * @see
- */
 public class GifProvider extends PictureFrameProvider<Gif, GifProvider.ViewHolder> {
 
     @Override
