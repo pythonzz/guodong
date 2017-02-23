@@ -14,7 +14,6 @@ public class ApiHelper
     public static final String DUANZI_BASE_URL = "http://ic.snssdk.com/";
     public static final String QIUBAI_BASE_URL = "http://m2.qiushibaike.com/";
 
-    private Object mLock = new Object();
     private volatile static ApiHelper sInstance;
 
     private ApiHelper()

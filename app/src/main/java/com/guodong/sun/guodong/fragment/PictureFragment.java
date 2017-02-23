@@ -5,19 +5,27 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 
 import com.guodong.sun.guodong.R;
 import com.guodong.sun.guodong.adapter.PictureAdapter;
 import com.guodong.sun.guodong.base.AbsBaseFragment;
-import com.guodong.sun.guodong.entity.picture.Picture;
+import com.guodong.sun.guodong.entity.picture.PictureBean;
+import com.guodong.sun.guodong.entity.picture.gifvideo.Gif;
+import com.guodong.sun.guodong.entity.picture.gifvideo.GifProvider;
+import com.guodong.sun.guodong.entity.picture.gifvideo.GifVideoBean;
+import com.guodong.sun.guodong.entity.picture.gifvideo.GifVideoProvider;
+import com.guodong.sun.guodong.entity.picture.multiimage.MultiImage;
+import com.guodong.sun.guodong.entity.picture.multiimage.MultiImageProvider;
+import com.guodong.sun.guodong.entity.picture.singleimage.LongImage;
+import com.guodong.sun.guodong.entity.picture.singleimage.LongImageViewProvider;
+import com.guodong.sun.guodong.entity.picture.singleimage.SingleImage;
+import com.guodong.sun.guodong.entity.picture.singleimage.SingleImageViewProvider;
 import com.guodong.sun.guodong.listener.OnRcvScrollListener;
 import com.guodong.sun.guodong.presenter.presenterImpl.PicturePreenterImpl;
 import com.guodong.sun.guodong.uitls.AppUtil;
 import com.guodong.sun.guodong.uitls.SnackbarUtil;
 import com.guodong.sun.guodong.view.IPictureView;
-import com.guodong.sun.guodong.widget.SunVideoPlayer;
 import com.guodong.sun.guodong.widget.WrapContentLinearLayoutManager;
 import com.melnykov.fab.FloatingActionButton;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -26,8 +34,9 @@ import com.nineoldandroids.animation.ValueAnimator;
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerManager;
+import me.drakeet.multitype.Items;
+
+import static me.drakeet.multitype.MultiTypeAsserts.assertAllRegistered;
 
 /**
  * Created by Administrator on 2016/10/10.
@@ -46,10 +55,11 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
 
     //RecycleView是否正在刷新
     private boolean isRefreshing = false;
-    private boolean isLoading;
+    private boolean isLoadingMore;
 
     private PicturePreenterImpl mPicturePreenter;
     private PictureAdapter mAdapter;
+    private Items mItems;
     private ObjectAnimator mAnimator;
 
     public static PictureFragment newInstance()
@@ -75,7 +85,6 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
             public void onRefresh()
             {
                 isRefreshing = true;
-//                mAdapter.clearDuanziList();
                 mPicturePreenter.getPictureData();
             }
         });
@@ -93,7 +102,7 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
             @Override
             public void onClick(View v)
             {
-                if (isRefreshing || isLoading)
+                if (isRefreshing || isLoadingMore)
                     return;
                 mAnimator = ObjectAnimator.ofFloat(v, "rotation", 0F, 360F);
                 mAnimator.setDuration(500);
@@ -110,8 +119,16 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
 
     private void initRecyclerView()
     {
-        mAdapter = new PictureAdapter(getContext(), mRecyclerView);
+        mItems = new Items();
+        mAdapter = new PictureAdapter();
+        mAdapter.register(Gif.class, new GifProvider());
+        mAdapter.register(GifVideoBean.class, new GifVideoProvider());
+        mAdapter.register(MultiImage.class, new MultiImageProvider());
+        mAdapter.register(LongImage.class, new LongImageViewProvider());
+        mAdapter.register(SingleImage.class, new SingleImageViewProvider());
+
         mRecyclerView.setAdapter(mAdapter);
+
         mRecyclerView.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(new OnRcvScrollListener()
@@ -120,9 +137,9 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
             public void onBottom()
             {
                 super.onBottom();
-                if (!isLoading)
+                if (!isLoadingMore)
                 {
-                    isLoading = true;
+                    isLoadingMore = true;
                     loadMoreDate();
                 }
             }
@@ -131,7 +148,6 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
 
     private void loadMoreDate()
     {
-        mAdapter.onLoadStart();
         mPicturePreenter.getPictureData();
     }
 
@@ -157,12 +173,21 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
     }
 
     @Override
-    public void updatePictureData(ArrayList<Picture.DataBeanX.DataBean> list)
+    public void updatePictureData(ArrayList<PictureBean.DataBeanX.DataBean> list)
     {
-        // 注意addList() 和 onLoadFinish()的调用顺序
-        mAdapter.addLists(list);
-        mAdapter.onLoadFinish();
-        isLoading = false;
+        int size = mAdapter.getItemCount();
+        if (isLoadingMore) {
+            mItems.addAll(list);
+            mAdapter.setItems(mItems);
+            mAdapter.notifyItemRangeInserted(size, list.size());
+        } else {
+            mItems.addAll(0, list);
+            mAdapter.setItems(mItems);
+            mAdapter.notifyItemRangeInserted(0, list.size());
+            mRecyclerView.scrollToPosition(0);
+        }
+        assertAllRegistered(mAdapter, mItems);
+        isLoadingMore = false;
     }
 
     @Override
@@ -179,7 +204,6 @@ public class PictureFragment extends AbsBaseFragment implements IPictureView
             mAnimator.cancel();
         if (mSwipeRefreshLayout != null)
             mSwipeRefreshLayout.setRefreshing(false);
-        isLoading = false;
         isRefreshing = false;
     }
 

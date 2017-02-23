@@ -1,22 +1,22 @@
 package com.guodong.sun.guodong.presenter.presenterImpl;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.google.gson.Gson;
-import com.guodong.sun.guodong.Config;
 import com.guodong.sun.guodong.api.ApiHelper;
 import com.guodong.sun.guodong.api.DuanZiApi;
-import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
-import com.guodong.sun.guodong.entity.picture.Picture;
-import com.guodong.sun.guodong.presenter.IDuanziPresenter;
+import com.guodong.sun.guodong.entity.picture.GsonProvider;
+import com.guodong.sun.guodong.entity.picture.PictureBean;
 import com.guodong.sun.guodong.presenter.IPicturePresenter;
-import com.guodong.sun.guodong.uitls.CacheUtil;
-import com.guodong.sun.guodong.view.IDuanziView;
+import com.guodong.sun.guodong.retrofit.RetrofitHelper;
 import com.guodong.sun.guodong.view.IPictureView;
 import com.trello.rxlifecycle.LifecycleTransformer;
 
 import java.util.ArrayList;
 
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,29 +30,30 @@ public class PicturePreenterImpl extends BasePresenterImpl implements IPicturePr
 {
 
     private IPictureView mPictureView;
-    private CacheUtil mCacheUtil;
-    private Gson gson = new Gson();
     private LifecycleTransformer bind;
+    private Retrofit mRetrofit;
 
     public PicturePreenterImpl(Context context, IPictureView mDuanziView, LifecycleTransformer bind)
     {
         this.mPictureView = mDuanziView;
-        mCacheUtil = CacheUtil.get(context);
         this.bind = bind;
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(ApiHelper.DUANZI_BASE_URL)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(GsonProvider.gson))
+                .client(RetrofitHelper.createOkHttpClient())
+                .build();
     }
 
     @Override
     public void getPictureData()
     {
         mPictureView.showProgressBar();
-        Subscription subscription = ApiHelper
-                .getInstance()
-                .getApi(DuanZiApi.class, ApiHelper.DUANZI_BASE_URL)
-                .getPicture()
+        Subscription subscription = mRetrofit.create(DuanZiApi.class).getPictureBean()
                 .compose(bind)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Picture>()
+                .subscribe(new Observer<PictureBean>()
                 {
                     @Override
                     public void onCompleted()
@@ -65,14 +66,15 @@ public class PicturePreenterImpl extends BasePresenterImpl implements IPicturePr
                     {
                         mPictureView.hideProgressBar();
                         mPictureView.showError(e.getMessage());
+                        Log.e("Test", "onError: " + e.getMessage());
                     }
 
                     @Override
-                    public void onNext(Picture list)
+                    public void onNext(PictureBean list)
                     {
                         mPictureView.hideProgressBar();
-                        ArrayList<Picture.DataBeanX.DataBean> datas = new ArrayList<>();
-                        for (Picture.DataBeanX.DataBean data : list.getData().getData())
+                        ArrayList<PictureBean.DataBeanX.DataBean> datas = new ArrayList<>();
+                        for (PictureBean.DataBeanX.DataBean data : list.getData().getData())
                         {
                             if (data.getType() == 1)
                                 datas.add(data);

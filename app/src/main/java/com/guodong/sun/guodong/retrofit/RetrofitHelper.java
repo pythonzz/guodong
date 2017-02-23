@@ -44,7 +44,7 @@ public class RetrofitHelper
                 .build();
     }
 
-    private OkHttpClient createOkHttpClient()
+    public static OkHttpClient createOkHttpClient()
     {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -60,7 +60,7 @@ public class RetrofitHelper
                 .build();
     }
 
-    private Cache getCache()
+    private static Cache getCache()
     {
         // 获取缓存目标
         File cacheFile = new File(MyApplication.getInstance().getCacheDir(), AppUtil.getAppName());
@@ -68,7 +68,7 @@ public class RetrofitHelper
         return new Cache(cacheFile, 1024 * 1024 * 50);
     }
 
-    private Interceptor createCacheInterceptor()
+    private static Interceptor createCacheInterceptor()
     {
         return new Interceptor()
         {

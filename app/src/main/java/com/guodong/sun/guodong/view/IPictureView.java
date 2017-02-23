@@ -1,8 +1,7 @@
 package com.guodong.sun.guodong.view;
 
 import com.guodong.sun.guodong.base.IBaseView;
-import com.guodong.sun.guodong.entity.duanzi.NeiHanDuanZi;
-import com.guodong.sun.guodong.entity.picture.Picture;
+import com.guodong.sun.guodong.entity.picture.PictureBean;
 
 import java.util.ArrayList;
 
@@ -12,5 +11,5 @@ import java.util.ArrayList;
 
 public interface IPictureView extends IBaseView
 {
-    void updatePictureData(ArrayList<Picture.DataBeanX.DataBean> list);
+    void updatePictureData(ArrayList<PictureBean.DataBeanX.DataBean> list);
 }

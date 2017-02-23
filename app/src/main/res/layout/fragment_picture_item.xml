@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,10 +16,10 @@
 
         <include layout="@layout/fragment_picture_top"/>
 
-        <com.guodong.sun.guodong.widget.ResizableImageView
-            android:id="@+id/fragment_picture_item_iv"
+        <FrameLayout
+            android:id="@+id/picture_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="10dp"/>
 
         <include layout="@layout/fragment_picture_bottom"/>
@@ -28,5 +29,4 @@
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:background="@color/mid_grey"/>
-
 </LinearLayout>
