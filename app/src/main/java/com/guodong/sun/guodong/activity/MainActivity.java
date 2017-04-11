@@ -173,17 +173,19 @@ public class MainActivity extends AbsBaseActivity {
 
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
-            return;
         } else {
-            if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
-                exitTime = System.currentTimeMillis();
-            } else {
-                String size = GlideCacheUtil.getInstance().getCacheSize(MainActivity.this);
-                if (Double.valueOf(size.substring(0, size.length() - 2)) >= 50)
-                    GlideCacheUtil.getInstance().clearImageAllCache(MainActivity.this);
-                super.onBackPressed();
-            }
+            Intent launcherIntent = new Intent(Intent.ACTION_MAIN);
+            launcherIntent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(launcherIntent);
+//            if ((System.currentTimeMillis() - exitTime) > 2000) {
+//                Toast.makeText(MainActivity.this, "再点一次，退出", Toast.LENGTH_SHORT).show();
+//                exitTime = System.currentTimeMillis();
+//            } else {
+//                String size = GlideCacheUtil.getInstance().getCacheSize(MainActivity.this);
+//                if (Double.valueOf(size.substring(0, size.length() - 2)) >= 50)
+//                    GlideCacheUtil.getInstance().clearImageAllCache(MainActivity.this);
+//                super.onBackPressed();
+//            }
         }
     }
 
