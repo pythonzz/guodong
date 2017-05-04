@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/guodong.iml" filepath="$PROJECT_DIR$/guodong.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/jcvideoplayer-lib/jcvideoplayer-lib.iml" filepath="$PROJECT_DIR$/libraries/jcvideoplayer-lib/jcvideoplayer-lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/libraries.iml" filepath="$PROJECT_DIR$/libraries/libraries.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recyclerview/recyclerview.iml" filepath="$PROJECT_DIR$/recyclerview/recyclerview.iml" />
     </modules>
   </component>
 </project>
